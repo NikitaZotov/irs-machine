@@ -11,8 +11,14 @@
 #define TRUE 1
 #define FALSE 0
 
+#define MAX_PATH_LENGTH 1024
+
 typedef unsigned short irs_bool;
 
+typedef char irs_int8;
+typedef unsigned char irs_uint8;
+typedef short irs_int16;
+typedef unsigned short irs_uint16;
 typedef int irs_int32;
 typedef unsigned int irs_uint32;
 typedef char irs_char;

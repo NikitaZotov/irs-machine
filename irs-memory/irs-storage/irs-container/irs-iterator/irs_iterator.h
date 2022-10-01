@@ -27,13 +27,13 @@ irs_iterator * irs_iterator_init(irs_struct_node * begin, irs_struct_node * end)
 
 /*! Checks next element existence in a irs-container.
  * @param it A irs-container-iterator pointer
- * @returns Returns SC_TRUE, if next element exists in irs-container
+ * @returns Returns TRUE, if next element exists in irs-container
  */
 irs_bool irs_iterator_next(irs_iterator * it);
 
 /*! Checks previous element existence in a irs-container.
  * @param it A irs-container-iterator pointer
- * @returns Returns SC_TRUE, if a previous element exists in irs-container
+ * @returns Returns TRUE, if a previous element exists in irs-container
  */
 irs_bool irs_iterator_prev(irs_iterator * it);
 
@@ -49,7 +49,7 @@ void * irs_iterator_get(irs_iterator * it);
 
 /*! Destroys a irs-container-iterator
  * @param it A irs-container-iterator pointer
- * @returns Returns SC_TRUE, if a irs-container-iterator pointer exists
+ * @returns Returns TRUE, if a irs-container-iterator pointer exists
  */
 irs_bool irs_iterator_destroy(irs_iterator * it);
 
