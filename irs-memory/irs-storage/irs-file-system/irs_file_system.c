@@ -29,7 +29,7 @@ irs_bool irs_fs_rmdir(irs_char const * path)
 
     if (irs_fs_isfile(path) == TRUE)
     {
-      if (g_remove(tmp_path) == -1)
+      if (irs_fs_rmfile(tmp_path) == FALSE)
         return FALSE;
     }
     else if (irs_fs_isdir(tmp_path) == TRUE)
@@ -52,8 +52,5 @@ irs_bool irs_fs_rmfile(irs_char const * path)
 irs_bool irs_fs_mkdirs(irs_char const * path)
 {
   irs_int32 const mode = 0755;
-  if (g_mkdir_with_parents(path, mode) == -1)
-    return FALSE;
-
-  return TRUE;
+  return g_mkdir_with_parents(path, mode) == -1;
 }

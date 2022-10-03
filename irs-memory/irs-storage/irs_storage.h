@@ -7,8 +7,14 @@
 
 typedef struct _irs_storage
 {
-  irs_dictionary * dictionary;
+  irs_dictionary * terms_significancy_dictionary;
   irs_char * path;
+
+  irs_char * terms_path;
+  irs_uint64 terms_size;
+
+  irs_char * strings_path;
+  irs_uint64 strings_size;
 } irs_storage;
 
 typedef enum _irs_storage_status
@@ -16,7 +22,8 @@ typedef enum _irs_storage_status
   IRS_STORAGE_OK,
 
   IRS_STORAGE_NO,
-  IRS_STORAGE_WRONG_PATH
+  IRS_STORAGE_WRONG_PATH,
+  IRS_STORAGE_WRITE_ERROR
 } irs_storage_status;
 
 irs_storage_status irs_storage_initialize(irs_storage ** storage, irs_char const * path);

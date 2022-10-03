@@ -21,6 +21,10 @@ typedef short irs_int16;
 typedef unsigned short irs_uint16;
 typedef int irs_int32;
 typedef unsigned int irs_uint32;
+typedef long irs_int64;
+typedef unsigned long irs_uint64;
+
 typedef char irs_char;
+typedef unsigned char irs_uchar;
 
 #endif //_irs_types_h_

@@ -9,6 +9,8 @@
 
 #include "../irs-base/irs_types.h"
 
+#include "irs-io/irs_io.h"
+
 irs_bool irs_fs_isdir(irs_char const * path);
 
 irs_bool irs_fs_isfile(irs_char const * path);
