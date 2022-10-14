@@ -13,8 +13,8 @@ typedef struct _irs_storage
   irs_char * terms_path;
   irs_uint64 terms_size;
 
-  irs_char * strings_path;
-  irs_uint64 strings_size;
+  irs_char * documents_path;
+  irs_uint64 documents_size;
 } irs_storage;
 
 typedef enum _irs_storage_status
@@ -30,8 +30,8 @@ irs_storage_status irs_storage_initialize(irs_storage ** storage, irs_char const
 
 irs_storage_status irs_storage_shutdown(irs_storage * storage);
 
-irs_storage_status irs_storage_add(irs_storage * storage, irs_list const * strings);
+irs_storage_status irs_storage_add_documents(irs_storage * storage, irs_list const * documents);
 
-irs_storage_status irs_storage_get(irs_storage * storage, irs_list const * terms, irs_list ** strings);
+irs_storage_status irs_storage_get_documents(irs_storage * storage, irs_list const * terms, irs_list ** documents);
 
 #endif //_irs_storage_

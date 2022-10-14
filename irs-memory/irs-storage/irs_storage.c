@@ -44,9 +44,9 @@ irs_storage_status irs_storage_initialize(irs_storage ** storage, irs_char const
     _irs_init_db_path(path, terms_postfix, &(*storage)->terms_path);
     (*storage)->terms_size = 0;
 
-    static irs_char const *strings_postfix = "strings.irsdb";
-    _irs_init_db_path(path, strings_postfix, &(*storage)->strings_path);
-    (*storage)->strings_size = 0;
+    static irs_char const *documents_postfix = "strings.irsdb";
+    _irs_init_db_path(path, documents_postfix, &(*storage)->documents_path);
+    (*storage)->documents_size = 0;
 
     if (irs_dictionary_initialize(
         &(*storage)->terms_significancy_dictionary, _irs_dictionary_children_size(), _irs_char_to_irs_int) == FALSE)
@@ -66,17 +66,16 @@ irs_storage_status irs_storage_shutdown(irs_storage * storage)
 
     irs_mem_free(storage->path);
     irs_mem_free(storage->terms_path);
-    irs_mem_free(storage->strings_path);
+    irs_mem_free(storage->documents_path);
   }
   irs_mem_free(storage);
 
   return IRS_STORAGE_OK;
 }
 
-irs_list * _irs_storage_pick_out_terms_in_string(irs_storage * storage, irs_list const * strings) {
+irs_list * _irs_storage_pick_out_terms_in_string(irs_storage * storage, irs_list const * documents) {
 
-  irs_iterator * it = irs_list_iterator((irs_list *)strings);
-
+  irs_iterator * it = irs_list_iterator((irs_list *)documents);
 
   while (irs_iterator_next(it))
   {
@@ -90,30 +89,30 @@ irs_list * _irs_storage_pick_out_terms_in_string(irs_storage * storage, irs_list
   }
 }
 
-irs_storage_status irs_storage_add(irs_storage * storage, irs_list const * strings)
+irs_storage_status irs_storage_add_documents(irs_storage * storage, irs_list const * documents)
 {
-  irs_iterator * it = irs_list_iterator((irs_list *)strings);
+  irs_iterator * it = irs_list_iterator((irs_list *)documents);
 
-  irs_io_channel * channel = irs_io_new_channel(storage->strings_path, "r", NULL_PTR);
-  irs_io_channel_seek(channel, storage->strings_size, IRS_IO_SEEK_SET, NULL_PTR);
+  irs_io_channel * channel = irs_io_new_channel(storage->documents_path, "r", NULL_PTR);
+  irs_io_channel_seek(channel, storage->documents_size, IRS_IO_SEEK_SET, NULL_PTR);
 
   while (irs_iterator_next(it))
   {
-    irs_char * string = irs_iterator_get(it);
-    irs_uint32 size = irs_str_len(string);
+    irs_char * document = irs_iterator_get(it);
+    irs_uint32 size = irs_str_len(document);
     irs_uint64 written_bytes = 0;
 
-    if (irs_io_channel_write_chars(channel, string, size, &written_bytes, NULL_PTR) != IRS_IO_STATUS_NORMAL
+    if (irs_io_channel_write_chars(channel, document, size, &written_bytes, NULL_PTR) != IRS_IO_STATUS_NORMAL
       || size != written_bytes)
       return IRS_STORAGE_WRITE_ERROR;
 
     irs_char * key;
-    irs_int_to_str_int(storage->strings_size, key);
+    irs_int_to_str_int(storage->documents_size, key);
     irs_uint32 key_size = irs_str_len(key);
 
     irs_dictionary_append(storage->terms_significancy_dictionary, key, key_size, NULL_PTR);
 
-    storage->strings_size += size;
+    storage->documents_size += size;
   }
 
   irs_iterator_destroy(it);
@@ -121,7 +120,7 @@ irs_storage_status irs_storage_add(irs_storage * storage, irs_list const * strin
   return IRS_STORAGE_OK;
 }
 
-irs_storage_status irs_storage_get(irs_storage * storage, irs_list const * terms, irs_list ** strings)
+irs_storage_status irs_storage_get(irs_storage * storage, irs_list const * terms, irs_list ** documents)
 {
 
 }
