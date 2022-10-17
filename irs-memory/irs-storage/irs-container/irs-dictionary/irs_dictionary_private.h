@@ -45,7 +45,7 @@ irs_dictionary_node * irs_dictionary_get_last_node_from_node(irs_dictionary * di
  * @param callable A callable object (procedure)
  * @param[out] dest A pointer to procedure result pointer
  */
-void irs_dictionary_visit_down_node_from_node(
+void _irs_dictionary_visit_down_node_from_node(
     irs_dictionary * dictionary,
     irs_dictionary_node * node,
     void (*callable)(irs_dictionary_node *, void **),
@@ -58,7 +58,7 @@ void irs_dictionary_visit_down_node_from_node(
  * @param callable A callable object (procedure)
  * @param[out] dest A pointer to procedure result pointer
  */
-void irs_dictionary_visit_up_node_from_node(
+void _irs_dictionary_visit_up_node_from_node(
     irs_dictionary * dictionary,
     irs_dictionary_node * node,
     void (*callable)(irs_dictionary_node *, void **),

@@ -242,7 +242,7 @@ void _irs_dictionary_visit_down_node_from_node(
     {
       callable(next, dest);
 
-      irs_dictionary_visit_down_node_from_node(dictionary, next, callable, dest);
+      _irs_dictionary_visit_down_node_from_node(dictionary, next, callable, dest);
     }
   }
 }
@@ -252,7 +252,7 @@ void irs_dictionary_visit_down_nodes(
     void (*callable)(irs_dictionary_node *, void **),
     void ** dest)
 {
-  irs_dictionary_visit_down_node_from_node(dictionary, dictionary->root, callable, dest);
+  _irs_dictionary_visit_down_node_from_node(dictionary, dictionary->root, callable, dest);
 }
 
 void _irs_dictionary_visit_up_node_from_node(
@@ -267,7 +267,7 @@ void _irs_dictionary_visit_up_node_from_node(
     irs_dictionary_node * next = node->next[i];
     if (SC_DICTIONARY_NODE_IS_VALID(next))
     {
-      irs_dictionary_visit_up_node_from_node(dictionary, next, callable, dest);
+      _irs_dictionary_visit_up_node_from_node(dictionary, next, callable, dest);
 
       callable(next, dest);
     }
@@ -279,5 +279,5 @@ void irs_dictionary_visit_up_nodes(
     void (*callable)(irs_dictionary_node *, void **),
     void ** dest)
 {
-  irs_dictionary_visit_up_node_from_node(dictionary, dictionary->root, callable, dest);
+  _irs_dictionary_visit_up_node_from_node(dictionary, dictionary->root, callable, dest);
 }
