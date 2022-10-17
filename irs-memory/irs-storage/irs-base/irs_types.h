@@ -27,4 +27,6 @@ typedef unsigned long irs_uint64;
 typedef char irs_char;
 typedef unsigned char irs_uchar;
 
+typedef float irs_float;
+
 #endif //_irs_types_h_

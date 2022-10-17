@@ -27,4 +27,8 @@
   string = irs_mem_new(irs_char, length + 1); \
   snprintf(string, length, "%lu", number)
 
+#define irs_str_find(str, substring) strstr(str, substring) != NULL_PTR
+
+#define irs_str_cmp(str, other) strcmp(str, other) == 0
+
 #endif
