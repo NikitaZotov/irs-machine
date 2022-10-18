@@ -27,10 +27,11 @@
   string = irs_mem_new(irs_char, length + 1); \
   snprintf(string, length, "%lu", number)
 
-#define irs_int_to_str_float(number, string) \
-  irs_uint64 length = snprintf(NULL_PTR, 0, "%f", number); \
-  string = irs_mem_new(irs_char, length + 1); \
-  snprintf(string, length, "%f", number)
+#define irs_float_to_str_float(number, string) \
+  irs_uint64 digit_size = snprintf(NULL_PTR, 0, "%lu", (irs_uint64)number); \
+  static irs_uint64 mnemonic_size = 4; \
+  string = irs_mem_new(irs_char, digit_size + mnemonic_size + 1); \
+  gcvt(number, digit_size, string)
 
 #define irs_str_find(str, substring) strstr(str, substring) != NULL_PTR
 

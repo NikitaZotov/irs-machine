@@ -7,6 +7,7 @@
 
 typedef struct _irs_storage
 {
+  irs_dictionary * term_offset_dictionary;
   irs_char * path;
 
   irs_char * terms_path;
