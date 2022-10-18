@@ -40,7 +40,7 @@ IrsMemoryJsonPayload IrsMemoryJsonHandler::ResponseRequestMessage(
     std::string const & requestType,
     IrsMemoryJsonPayload const & requestPayload)
 {
-  irs_bool status = FALSE;
+  irs_bool status = IRS_FALSE;
 
   IrsMemoryJsonPayload responsePayload;
   try
@@ -49,7 +49,7 @@ IrsMemoryJsonPayload IrsMemoryJsonHandler::ResponseRequestMessage(
   }
   catch (...)
   {
-    status = FALSE;
+    status = IRS_FALSE;
   }
 
   return FormResponseMessage(requestId, status, responsePayload);
@@ -62,13 +62,13 @@ IrsMemoryJsonPayload IrsMemoryJsonHandler::HandleRequestPayload(
     IrsMemoryJsonPayload const & requestPayload,
     irs_bool & status)
 {
-  status = FALSE;
+  status = IRS_FALSE;
 
   IrsMemoryJsonPayload responsePayload;
   auto const & it = m_commands.find(requestType);
   if (it == m_commands.end())
   {
-    status = FALSE;
+    status = IRS_FALSE;
   }
 
   auto * command = it->second;

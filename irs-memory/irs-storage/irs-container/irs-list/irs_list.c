@@ -11,20 +11,20 @@
 irs_bool irs_list_init(irs_list ** list)
 {
   if (list == NULL_PTR)
-    return FALSE;
+    return IRS_FALSE;
 
   *list = irs_mem_new(irs_list, 1);
   (*list)->begin = NULL_PTR;
   (*list)->end = NULL_PTR;
   (*list)->size = 0;
 
-  return TRUE;
+  return IRS_TRUE;
 }
 
 irs_bool irs_list_destroy(irs_list * list)
 {
   if (list == NULL_PTR)
-    return FALSE;
+    return IRS_FALSE;
 
   irs_struct_node * node = list->begin;
   irs_struct_node * temp;
@@ -38,13 +38,13 @@ irs_bool irs_list_destroy(irs_list * list)
 
   irs_mem_free(list);
 
-  return TRUE;
+  return IRS_TRUE;
 }
 
 irs_bool irs_list_clear(irs_list * list)
 {
   if (list == NULL_PTR)
-    return FALSE;
+    return IRS_FALSE;
 
   irs_struct_node * node = list->begin;
   while (node != NULL_PTR)
@@ -54,7 +54,7 @@ irs_bool irs_list_clear(irs_list * list)
     node = node->next;
   }
 
-  return TRUE;
+  return IRS_TRUE;
 }
 
 irs_struct_node * irs_list_push(irs_list * list, irs_struct_node * node, void * data)
@@ -120,9 +120,9 @@ irs_struct_node * irs_list_pop_back(irs_list * list)
 irs_bool irs_list_remove_if(irs_list * list, void * data, irs_bool (*predicate)(void * data, void * other))
 {
   if (list == NULL_PTR)
-    return FALSE;
+    return IRS_FALSE;
 
-  irs_bool is_removed = FALSE;
+  irs_bool is_removed = IRS_FALSE;
   irs_struct_node * node = list->begin;
   irs_struct_node * temp = NULL_PTR;
   while (node != NULL_PTR)
@@ -138,7 +138,7 @@ irs_bool irs_list_remove_if(irs_list * list, void * data, irs_bool (*predicate)(
       temp = node;
       node = node->next;
       irs_mem_free(temp);
-      is_removed = TRUE;
+      is_removed = IRS_TRUE;
 
       --list->size;
     }

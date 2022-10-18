@@ -9,7 +9,7 @@ IrsServerImpl::IrsServerImpl(
     std::string const & logFile,
     std::string const & logLevel)
   : IrsServer(host, port, logType, logFile, logLevel),
-    m_actionsRun(TRUE),
+    m_actionsRun(IRS_TRUE),
     m_actions(new IrsServerActions()),
     m_memory(nullptr)
 {
@@ -24,10 +24,10 @@ void IrsServerImpl::Initialize()
 
 void IrsServerImpl::AfterInitialize()
 {
-  while (m_actions->empty() == FALSE)
+  while (m_actions->empty() == IRS_FALSE)
     ;
 
-  m_actionsRun = FALSE;
+  m_actionsRun = IRS_FALSE;
   m_actionCond.notify_one();
 
   delete m_memory;
@@ -36,14 +36,14 @@ void IrsServerImpl::AfterInitialize()
 
 void IrsServerImpl::EmitActions()
 {
-  while (m_actionsRun == TRUE)
+  while (m_actionsRun == IRS_TRUE)
   {
     IrsServerUniqueLock lock(m_actionLock);
 
     while (m_actions->empty() && m_actionsRun)
       m_actionCond.wait(lock);
 
-    if (m_actionsRun == TRUE)
+    if (m_actionsRun == IRS_TRUE)
       break;
 
     IrsServerAction * action = m_actions->front();

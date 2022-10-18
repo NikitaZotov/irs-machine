@@ -17,7 +17,7 @@ public:
 
   void Add(std::vector<std::string> const & documents) const;
 
-  std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
+  [[nodiscard]] std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
     Get(std::vector<std::string> const & terms) const;
 
 private:
@@ -25,5 +25,5 @@ private:
 
   irs_storage * m_storage;
 
-  IrsMemory(irs_char const * path);
+  explicit IrsMemory(irs_char const * path);
 };

@@ -20,19 +20,19 @@ typedef struct _irs_list
 
 /*! Initializes irs-list.
  * @param[out] list Pointer to a irs-list pointer to initialize
- * @returns Returns TRUE, if irs-list didn't exist; otherwise return FALSE.
+ * @returns Returns IRS_TRUE, if irs-list didn't exist; otherwise return IRS_FALSE.
  */
 irs_bool irs_list_init(irs_list ** list);
 
 /*! Destroys a irs-list.
  * @param list A irs-dictionary pointer to destroy
- * @returns Returns TRUE, if a irs-dictionary exists; otherwise return FALSE.
+ * @returns Returns IRS_TRUE, if a irs-dictionary exists; otherwise return IRS_FALSE.
  */
 irs_bool irs_list_destroy(irs_list * list);
 
 /*! Free a irs-list values.
  * @param list A irs-dictionary pointer to clear
- * @returns Returns TRUE, if a irs-dictionary exists; otherwise return FALSE.
+ * @returns Returns IRS_TRUE, if a irs-dictionary exists; otherwise return IRS_FALSE.
  */
 irs_bool irs_list_clear(irs_list * list);
 
@@ -57,7 +57,7 @@ irs_struct_node * irs_list_push_back(irs_list * list, void * data);
  */
 irs_struct_node * irs_list_pop_back(irs_list * list);
 
-/*! Removes node from irs-list if predicate for values is TRUE.
+/*! Removes node from irs-list if predicate for values is IRS_TRUE.
  * @param list A irs-list pointer
  * @returns Returns Popped node.
  */

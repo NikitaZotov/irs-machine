@@ -23,19 +23,19 @@ irs_bool irs_dictionary_initialize(
   (*dictionary)->irs_char_to_irs_int = irs_char_to_irs_int;
   (*dictionary)->root = _irs_dictionary_node_initialize(size);
 
-  return TRUE;
+  return IRS_TRUE;
 }
 
 irs_bool irs_dictionary_destroy(irs_dictionary * dictionary)
 {
   if (dictionary == NULL_PTR)
-    return FALSE;
+    return IRS_FALSE;
 
   irs_dictionary_visit_up_nodes(dictionary, irs_dictionary_node_destroy, NULL_PTR);
   irs_dictionary_node_destroy(dictionary->root, NULL_PTR);
   irs_mem_free(dictionary);
 
-  return TRUE;
+  return IRS_TRUE;
 }
 
 inline irs_dictionary_node * _irs_dictionary_node_initialize(irs_uint8 size)

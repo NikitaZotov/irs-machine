@@ -5,36 +5,36 @@
 #include "../irs-storage/irs_storage.h"
 #include "../irs-storage/irs-container/irs-pair/irs_pair.h"
 
-#define EXPECT_TRUE(expression) if (expression == FALSE) g_error("Expect TRUE, but gotten FALSE")
+#define EXPECT_IRS_TRUE(expression) if (expression == IRS_FALSE) g_error("Expect IRS_TRUE, but gotten IRS_FALSE")
 
 #define TEST(name) void name()
 
 TEST(irs_storage_init_shut)
 {
   irs_storage * storage;
-  EXPECT_TRUE(irs_storage_initialize(&storage, "db/") == IRS_STORAGE_OK);
+  EXPECT_IRS_TRUE(irs_storage_initialize(&storage, "db/") == IRS_STORAGE_OK);
 
-  EXPECT_TRUE(irs_storage_shutdown(storage) == IRS_STORAGE_OK);
+  EXPECT_IRS_TRUE(irs_storage_shutdown(storage) == IRS_STORAGE_OK);
 }
 
 TEST(irs_storage_init_and_add_documents)
 {
   irs_storage * storage;
-  EXPECT_TRUE(irs_storage_initialize(&storage, "db/") == IRS_STORAGE_OK);
+  EXPECT_IRS_TRUE(irs_storage_initialize(&storage, "db/") == IRS_STORAGE_OK);
 
   irs_list * documents;
   irs_list_init(&documents);
-  EXPECT_TRUE(irs_list_push_back(documents, "it is the first document"));
-  EXPECT_TRUE(irs_list_push_back(documents, "it is the second document"));
+  EXPECT_IRS_TRUE(irs_list_push_back(documents, "it is the first document"));
+  EXPECT_IRS_TRUE(irs_list_push_back(documents, "it is the second document"));
 
-  EXPECT_TRUE(irs_storage_add_documents(storage, documents) == IRS_STORAGE_OK);
+  EXPECT_IRS_TRUE(irs_storage_add_documents(storage, documents) == IRS_STORAGE_OK);
   irs_list_destroy(documents);
 
   irs_list * terms;
   irs_list_init(&terms);
-  EXPECT_TRUE(irs_list_push_back(terms, "it"));
-  EXPECT_TRUE(irs_list_push_back(terms, "first"));
-  EXPECT_TRUE(irs_list_push_back(terms, "the"));
+  EXPECT_IRS_TRUE(irs_list_push_back(terms, "it"));
+  EXPECT_IRS_TRUE(irs_list_push_back(terms, "first"));
+  EXPECT_IRS_TRUE(irs_list_push_back(terms, "the"));
 
   irs_storage_get_documents(storage, terms, &documents);
   irs_list_destroy(terms);
@@ -60,7 +60,7 @@ TEST(irs_storage_init_and_add_documents)
   }
   irs_iterator_destroy(terms_documents_it);
 
-  EXPECT_TRUE(irs_storage_shutdown(storage) == IRS_STORAGE_OK);
+  EXPECT_IRS_TRUE(irs_storage_shutdown(storage) == IRS_STORAGE_OK);
 }
 
 irs_int32 main()

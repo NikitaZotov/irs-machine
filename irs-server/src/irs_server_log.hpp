@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ostream>
+#include <fstream>
 #include <string>
 #include <unordered_set>
 
@@ -23,7 +23,7 @@ public:
     logFile = DefineFile(logType, logFile);
     logLevel = DefineLevel(logLevel);
 
-    if (logFile.empty() == FALSE)
+    if (logFile.empty() == IRS_FALSE)
     {
       m_instance = new std::ofstream();
       m_instance->open(logFile);

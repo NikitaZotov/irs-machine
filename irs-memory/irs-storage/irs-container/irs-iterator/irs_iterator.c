@@ -21,7 +21,7 @@ irs_iterator * irs_iterator_init(irs_struct_node * begin, irs_struct_node * end)
 irs_bool irs_iterator_next(irs_iterator * it)
 {
   if (it == NULL_PTR || it->begin == NULL_PTR)
-    return FALSE;
+    return IRS_FALSE;
 
   if (it->current == NULL_PTR)
   {
@@ -36,7 +36,7 @@ irs_bool irs_iterator_next(irs_iterator * it)
 irs_bool irs_iterator_prev(irs_iterator * it)
 {
   if (it == NULL_PTR || it->end == NULL_PTR)
-    return FALSE;
+    return IRS_FALSE;
 
   if (it->current == NULL_PTR)
   {
@@ -64,8 +64,8 @@ void * irs_iterator_get(irs_iterator * it)
 irs_bool irs_iterator_destroy(irs_iterator * it)
 {
   if (it == NULL_PTR)
-    return FALSE;
+    return IRS_FALSE;
 
   irs_mem_free(it);
-  return TRUE;
+  return IRS_TRUE;
 }

@@ -10,8 +10,8 @@
 #include <glib.h>
 
 #define NULL_PTR 0
-#define TRUE 1
-#define FALSE 0
+#define IRS_TRUE 1
+#define IRS_FALSE 0
 
 #define MAX_PATH_LENGTH 1024
 

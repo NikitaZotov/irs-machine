@@ -17,7 +17,7 @@ public:
 
   std::string Emit(IrsMemory const & memory) override
   {
-    m_handler.Handle(memory, m_hdl, m_msg->get_payload());
+    return m_handler.Handle(memory, m_hdl, m_msg->get_payload());
   }
 
   ~IrsServerMessageAction() override = default;;

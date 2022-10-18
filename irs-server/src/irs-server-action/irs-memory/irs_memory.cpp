@@ -1,9 +1,14 @@
 #include "irs_memory.hpp"
 
+extern "C"
+{
 #include "irs_memory.h"
 #include "irs-storage/irs-container/irs-list/irs_list.h"
 #include "irs-storage/irs-container/irs-pair/irs_pair.h"
 #include "irs-storage/irs-base/irs_allocator.h"
+}
+
+IrsMemory * IrsMemory::m_instance = nullptr;
 
 IrsMemory::IrsMemory(irs_char const * path)
 {
@@ -27,7 +32,7 @@ IrsMemory::~IrsMemory()
   m_instance = nullptr;
 }
 
-void IrsMemory::Add(std::vector<std::string> const & documents)
+void IrsMemory::Add(std::vector<std::string> const & documents) const
 {
   irs_list * list;
   irs_list_init(&list);
@@ -41,7 +46,7 @@ void IrsMemory::Add(std::vector<std::string> const & documents)
 }
 
 std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
-  IrsMemory::Get(std::vector<std::string> const & terms)
+  IrsMemory::Get(std::vector<std::string> const & terms) const
 {
   irs_list * list;
   irs_list_init(&list);
@@ -58,14 +63,14 @@ std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
   irs_iterator * termsDocumentsIt = irs_list_iterator(documentsWithSignificancies);
   while (irs_iterator_next(termsDocumentsIt))
   {
-    irs_list * documentsWithTerm = (irs_list *)irs_iterator_get(termsDocumentsIt);
+    auto * documentsWithTerm = (irs_list *)irs_iterator_get(termsDocumentsIt);
 
     std::unordered_map<std::string, float> documents;
 
     irs_iterator * termDocumentsIt = irs_list_iterator(documentsWithTerm);
     while (irs_iterator_next(termDocumentsIt))
     {
-      irs_pair * pair = (irs_pair *)irs_iterator_get(termDocumentsIt);
+      auto * pair = (irs_pair *)irs_iterator_get(termDocumentsIt);
 
       std::string const documentStr = std::string((irs_char*)pair->first);
       irs_float const termSignificancy = std::stof(std::string((irs_char*)pair->second));
@@ -86,4 +91,6 @@ std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
   irs_iterator_destroy(termsDocumentsIt);
 
   irs_list_destroy(list);
+
+  return map;
 }

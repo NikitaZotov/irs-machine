@@ -15,8 +15,8 @@ irs_bool irs_fs_isfile(irs_char const * path)
 
 irs_bool irs_fs_rmdir(irs_char const * path)
 {
-  if (irs_fs_isdir(path) == FALSE)
-    return FALSE;
+  if (irs_fs_isdir(path) == IRS_FALSE)
+    return IRS_FALSE;
 
   GDir * directory = g_dir_open(path, 0, 0);
 
@@ -27,12 +27,12 @@ irs_bool irs_fs_rmdir(irs_char const * path)
   {
     g_snprintf(tmp_path, MAX_PATH_LENGTH, "%s/%s", path, dir);
 
-    if (irs_fs_isfile(path) == TRUE)
+    if (irs_fs_isfile(path) == IRS_TRUE)
     {
-      if (irs_fs_rmfile(tmp_path) == FALSE)
-        return FALSE;
+      if (irs_fs_rmfile(tmp_path) == IRS_FALSE)
+        return IRS_FALSE;
     }
-    else if (irs_fs_isdir(tmp_path) == TRUE)
+    else if (irs_fs_isdir(tmp_path) == IRS_TRUE)
       irs_fs_rmdir(tmp_path);
 
     dir = g_dir_read_name(directory);
@@ -41,7 +41,7 @@ irs_bool irs_fs_rmdir(irs_char const * path)
   g_dir_close(directory);
   g_rmdir(path);
 
-  return TRUE;
+  return IRS_TRUE;
 }
 
 irs_bool irs_fs_rmfile(irs_char const * path)

@@ -34,14 +34,14 @@ public:
           "\tLog file: " + ((logType != IRS_SERVER_FILE_TYPE || logFile.empty()) ? "No" : logFile));
       LogMessage(IrsServerLogMessages::app, "\tLog level: " + logLevel);
     }
-    LogMessage(IrsServerLogMessages::app, "Irs-machine launched");
+    LogMessage(IrsServerLogMessages::app, "IRS-machine launched");
     m_log = new IrsServerLog(m_instance, logType, logFile, logLevel);
   }
 
   void Run()
   {
     m_instance->init_asio();
-    m_instance->set_reuse_addr(TRUE);
+    m_instance->set_reuse_addr(IRS_TRUE);
 
     Initialize();
 
@@ -121,8 +121,6 @@ public:
   {
     m_instance->set_access_channels(channels);
   }
-
-  virtual void OnEvent(IrsServerConnectionHandle const & hdl, std::string const & msg) = 0;
 
   virtual ~IrsServer()
   {

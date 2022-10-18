@@ -43,14 +43,14 @@ typedef struct _irs_dictionary
 
 /*! Initializes irs-dictionary
  * @param dictionary Pointer to a irs-dictionary pointer to initialize
- * @returns[out] Returns TRUE, if irs-dictionary doesn't exist; otherwise return FALSE.
+ * @returns[out] Returns IRS_TRUE, if irs-dictionary doesn't exist; otherwise return IRS_FALSE.
  */
 irs_bool irs_dictionary_initialize(
     irs_dictionary ** dictionary, irs_uint8 size, void (*irs_char_to_irs_int)(irs_char, irs_uint8 *, irs_uint8 *));
 
 /*! Destroys a irs-dictionary
  * @param dictionary A irs-dictionary pointer to destroy
- * @returns Returns TRUE, if a irs-dictionary exists; otherwise return FALSE.
+ * @returns Returns IRS_TRUE, if a irs-dictionary exists; otherwise return IRS_FALSE.
  */
 irs_bool irs_dictionary_destroy(irs_dictionary * dictionary);
 
@@ -69,7 +69,7 @@ irs_dictionary_node * irs_dictionary_append(
  * node, if such exists.
  * @param irs_dictionary A irs-dictionary node where common prefix may be started
  * @param irs_string A verifiable string
- * @returns Returns TRUE, if string starts in irs-dictionary node; otherwise return FALSE.
+ * @returns Returns IRS_TRUE, if string starts in irs-dictionary node; otherwise return IRS_FALSE.
  */
 irs_bool irs_dictionary_is_in(irs_dictionary * dictionary, const irs_char * irs_string);
 

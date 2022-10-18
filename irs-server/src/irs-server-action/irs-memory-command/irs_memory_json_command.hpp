@@ -2,7 +2,7 @@
 
 #include "../irs_memory_json_payload.hpp"
 
-#include "irs-memory/irs_memory.hpp"
+#include "../irs-memory/irs_memory.hpp"
 
 class IrsMemoryJsonCommand
 {
