@@ -23,9 +23,9 @@
 #define irs_str_printf(out, size, format, ...) g_snprintf(out, size, format, __VA_ARGS__)
 
 #define irs_int_to_str_int(number, string) \
-  irs_uint64 length = snprintf(NULL_PTR, 0, "%lu", number); \
+  irs_uint64 length = (number == 0) ? 1 : snprintf(NULL_PTR, 0, "%lu", number); \
   string = irs_mem_new(irs_char, length + 1); \
-  snprintf(string, length, "%lu", number)
+  gcvt(number, length, string)
 
 #define irs_float_to_str_float(number, string) \
   irs_uint64 digit_size = snprintf(NULL_PTR, 0, "%lu", (irs_uint64)number); \
