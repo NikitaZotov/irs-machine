@@ -5,7 +5,10 @@
 class IrsMemoryAddDocumentsCommand : public IrsMemoryJsonCommand
 {
 public:
-  IrsMemoryJsonPayload Complete(IrsMemoryJsonPayload requestPayload) override
+  IrsMemoryJsonPayload Complete(IrsMemory const & memory, IrsMemoryJsonPayload requestPayload) override
   {
+    auto const documents = requestPayload.get<std::vector<std::string>>();
+    memory.Add(documents);
+    return { {} };
   }
 };

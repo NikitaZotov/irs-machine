@@ -1,6 +1,7 @@
 #include "irs_memory_json_handler.hpp"
 
-std::string IrsMemoryJsonHandler::Handle(IrsServerConnectionHandle const & hdl, std::string const & requestMessage)
+std::string IrsMemoryJsonHandler::Handle(
+    IrsMemory const & memory, IrsServerConnectionHandle const & hdl, std::string const & requestMessage)
 {
   std::vector<IrsMemoryJsonPayload> requestData = ParseRequestMessage(requestMessage);
   if (requestData.empty())
@@ -10,7 +11,7 @@ std::string IrsMemoryJsonHandler::Handle(IrsServerConnectionHandle const & hdl, 
   IrsMemoryJsonPayload const & requestPayload = requestData.at(1);
   size_t const & requestId = requestData.at(2).get<size_t>();
 
-  return ResponseRequestMessage(hdl, requestId, requestType, requestPayload).dump();
+  return ResponseRequestMessage(memory, hdl, requestId, requestType, requestPayload).dump();
 }
 
 std::vector<IrsMemoryJsonPayload> IrsMemoryJsonHandler::ParseRequestMessage(std::string const & requestMessage)
@@ -33,6 +34,7 @@ std::vector<IrsMemoryJsonPayload> IrsMemoryJsonHandler::ParseRequestMessage(std:
 }
 
 IrsMemoryJsonPayload IrsMemoryJsonHandler::ResponseRequestMessage(
+    IrsMemory const & memory,
     IrsServerConnectionHandle const & hdl,
     size_t const requestId,
     std::string const & requestType,
@@ -43,7 +45,7 @@ IrsMemoryJsonPayload IrsMemoryJsonHandler::ResponseRequestMessage(
   IrsMemoryJsonPayload responsePayload;
   try
   {
-    responsePayload = HandleRequestPayload(hdl, requestType, requestPayload, status);
+    responsePayload = HandleRequestPayload(memory, hdl, requestType, requestPayload, status);
   }
   catch (...)
   {
@@ -54,6 +56,7 @@ IrsMemoryJsonPayload IrsMemoryJsonHandler::ResponseRequestMessage(
 }
 
 IrsMemoryJsonPayload IrsMemoryJsonHandler::HandleRequestPayload(
+    IrsMemory const & memory,
     IrsServerConnectionHandle const & hdl,
     std::string const & requestType,
     IrsMemoryJsonPayload const & requestPayload,
@@ -69,7 +72,7 @@ IrsMemoryJsonPayload IrsMemoryJsonHandler::HandleRequestPayload(
   }
 
   auto * command = it->second;
-  responsePayload = command->Complete(requestPayload);
+  responsePayload = command->Complete(memory, requestPayload);
 
   return responsePayload;
 }

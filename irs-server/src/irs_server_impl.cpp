@@ -1,9 +1,3 @@
-/*
- * This source file is part of an OSTIS project. For the latest info, see http://ostis.net
- * Distributed under the MIT License
- * (See accompanying file COPYING.MIT or copy at http://opensource.org/licenses/MIT)
- */
-
 #include "irs_server_impl.hpp"
 
 #include "irs_server_action_defines.hpp"
@@ -16,12 +10,15 @@ IrsServerImpl::IrsServerImpl(
     std::string const & logLevel)
   : IrsServer(host, port, logType, logFile, logLevel),
     m_actionsRun(TRUE),
-    m_actions(new IrsServerActions())
+    m_actions(new IrsServerActions()),
+    m_memory(nullptr)
 {
 }
 
 void IrsServerImpl::Initialize()
 {
+  m_memory = IrsMemory::GetInstance("db/");
+
   m_instance->set_message_handler(bind(&IrsServerImpl::OnMessage, this, ::_1, ::_2));
 }
 
@@ -32,6 +29,9 @@ void IrsServerImpl::AfterInitialize()
 
   m_actionsRun = FALSE;
   m_actionCond.notify_one();
+
+  delete m_memory;
+  m_memory = nullptr;
 }
 
 void IrsServerImpl::EmitActions()
@@ -55,7 +55,7 @@ void IrsServerImpl::EmitActions()
 
     try
     {
-      std::string answer = action->Emit();
+      std::string answer = action->Emit(*m_memory);
     }
     catch (std::exception const & e)
     {

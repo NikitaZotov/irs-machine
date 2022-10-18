@@ -32,6 +32,8 @@ protected:
 
   IrsServerActions * m_actions;
 
+  IrsMemory * m_memory;
+
   void Initialize() override;
 
   void AfterInitialize() override;

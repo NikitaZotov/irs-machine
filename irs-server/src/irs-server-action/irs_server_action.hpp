@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../irs_server_defines.hpp"
+#include "irs-memory/irs_memory.hpp"
 
 class IrsServerAction
 {
@@ -10,7 +11,7 @@ public:
   {
   }
 
-  virtual std::string Emit() = 0;
+  virtual std::string Emit(IrsMemory const & memory) = 0;
 
   virtual ~IrsServerAction() = default;
 

@@ -5,7 +5,10 @@
 class IrsMemoryGetDocumentsCommand : public IrsMemoryJsonCommand
 {
 public:
-  IrsMemoryJsonPayload Complete(IrsMemoryJsonPayload requestPayload) override
+  IrsMemoryJsonPayload Complete(IrsMemory const & memory, IrsMemoryJsonPayload requestPayload) override
   {
+    auto const terms = requestPayload.get<std::vector<std::string>>();
+    std::unordered_map<std::string, std::unordered_map<std::string, irs_float>> documents = memory.Get(terms);
+    return { documents };
   }
 };
