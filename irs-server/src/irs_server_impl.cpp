@@ -43,23 +43,19 @@ void IrsServerImpl::EmitActions()
     while (m_actions->empty() && m_actionsRun)
       m_actionCond.wait(lock);
 
-    if (m_actionsRun == IRS_TRUE)
-      break;
-
     IrsServerAction * action = m_actions->front();
     m_actions->pop();
 
     lock.unlock();
 
-    IrsServerLock guard(m_connectionLock);
-
     try
     {
-      if (m_actionsRun == IRS_TRUE)
-      {
-        std::string answer = action->Emit(*m_memory);
-        delete action;
-      }
+      std::string answer = action->Emit(*m_memory);
+      Send(action->m_hdl, answer, IrsServerMessageType::text);
+
+      LogMessage(IrsServerLogMessages::message_payload, answer);
+
+      delete action;
     }
     catch (std::exception const & e)
     {
@@ -71,6 +67,7 @@ void IrsServerImpl::EmitActions()
 
 void IrsServerImpl::OnMessage(IrsServerConnectionHandle const & hdl, IrsServerMessage const & msg)
 {
+  LogMessage(IrsServerLogMessages::message_payload, msg->get_payload());
   {
     IrsServerLock guard(m_actionLock);
     m_actions->push(new IrsServerMessageAction(hdl, msg));
