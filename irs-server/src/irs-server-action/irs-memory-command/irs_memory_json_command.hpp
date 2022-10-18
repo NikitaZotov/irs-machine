@@ -7,7 +7,8 @@
 class IrsMemoryJsonCommand
 {
 public:
-  virtual IrsMemoryJsonPayload Complete(IrsMemory const & memory, IrsMemoryJsonPayload requestPayload) = 0;
+  virtual IrsMemoryJsonPayload Complete(
+      IrsMemory const & memory, IrsMemoryJsonPayload requestPayload, irs_bool & status) = 0;
 
   virtual ~IrsMemoryJsonCommand() = default;
 };

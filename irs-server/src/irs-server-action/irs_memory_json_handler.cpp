@@ -72,7 +72,7 @@ IrsMemoryJsonPayload IrsMemoryJsonHandler::HandleRequestPayload(
   }
 
   auto * command = it->second;
-  responsePayload = command->Complete(memory, requestPayload);
+  responsePayload = command->Complete(memory, requestPayload, status);
 
   return responsePayload;
 }

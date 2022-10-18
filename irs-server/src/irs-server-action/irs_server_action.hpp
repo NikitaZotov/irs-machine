@@ -15,6 +15,6 @@ public:
 
   virtual ~IrsServerAction() = default;
 
-protected:
+public:
   IrsServerConnectionHandle m_hdl;
 };
