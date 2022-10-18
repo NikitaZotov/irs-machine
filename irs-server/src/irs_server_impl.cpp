@@ -55,13 +55,17 @@ void IrsServerImpl::EmitActions()
 
     try
     {
-      std::string answer = action->Emit(*m_memory);
+      if (m_actionsRun == IRS_TRUE)
+      {
+        std::string answer = action->Emit(*m_memory);
+        delete action;
+      }
     }
     catch (std::exception const & e)
     {
-      LogError(IrsServerLogErrors::devel, e.what());
+      delete action;
+      LogError(IrsServerLogErrors::rerror, e.what());
     }
-    delete action;
   }
 }
 
