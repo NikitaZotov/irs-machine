@@ -7,6 +7,8 @@
 #ifndef _irs_types_h_
 #define _irs_types_h_
 
+#include <glib.h>
+
 #define NULL_PTR 0
 #define TRUE 1
 #define FALSE 0

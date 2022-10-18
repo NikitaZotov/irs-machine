@@ -20,12 +20,17 @@
 
 #define irs_str_len(string) strlen(string)
 
-#define irs_str_printf(out, size, format, ...) g_snprintf(out, size, "%s/%s", __VA_ARGS__)
+#define irs_str_printf(out, size, format, ...) g_snprintf(out, size, format, __VA_ARGS__)
 
 #define irs_int_to_str_int(number, string) \
   irs_uint64 length = snprintf(NULL_PTR, 0, "%lu", number); \
   string = irs_mem_new(irs_char, length + 1); \
   snprintf(string, length, "%lu", number)
+
+#define irs_int_to_str_float(number, string) \
+  irs_uint64 length = snprintf(NULL_PTR, 0, "%f", number); \
+  string = irs_mem_new(irs_char, length + 1); \
+  snprintf(string, length, "%f", number)
 
 #define irs_str_find(str, substring) strstr(str, substring) != NULL_PTR
 

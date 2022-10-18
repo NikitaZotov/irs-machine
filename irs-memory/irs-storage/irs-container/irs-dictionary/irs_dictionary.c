@@ -18,9 +18,6 @@
 irs_bool irs_dictionary_initialize(
     irs_dictionary ** dictionary, irs_uint8 size, void (*irs_char_to_irs_int)(irs_char, irs_uint8 *, irs_uint8 *))
 {
-  if (*dictionary != NULL_PTR)
-    return FALSE;
-
   *dictionary = irs_mem_new(irs_dictionary, 1);
   (*dictionary)->size = size;
   (*dictionary)->irs_char_to_irs_int = irs_char_to_irs_int;
@@ -59,7 +56,6 @@ void irs_dictionary_node_destroy(irs_dictionary_node * node, void ** args)
 {
   (void)args;
 
-  irs_list_clear(node->data_list);
   irs_list_destroy(node->data_list);
   node->data_list = NULL_PTR;
 
@@ -166,9 +162,7 @@ irs_dictionary_node * irs_dictionary_append(
   if (node->data_list == NULL_PTR)
     irs_list_init(&node->data_list);
 
-  void * copy = irs_mem_new(void, sizeof(value));
-  *(void **)copy = *(void **)value;
-  irs_list_push_back(node->data_list, copy);
+  irs_list_push_back(node->data_list, value);
   return node;
 }
 
