@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irs_server_action.hpp"
+#include "irs_memory_json_handler.hpp"
 
 #include <utility>
 
@@ -11,17 +12,18 @@ public:
     : IrsServerAction(std::move(hdl))
     , m_msg(std::move(msg))
   {
+
   }
 
   std::string Emit() override
   {
-
+    m_handler.Handle(m_hdl, m_msg->get_payload());
   }
 
-  ~IrsServerMessageAction() override
-  {
-  };
+  ~IrsServerMessageAction() override = default;;
 
 protected:
+  IrsMemoryJsonHandler m_handler;
+
   IrsServerMessage m_msg;
 };
