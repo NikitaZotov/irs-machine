@@ -7,8 +7,8 @@ std::unique_ptr<IrsServer> IrsServerFactory::ConfigureIrsServer()
   std::unique_ptr<IrsServer> server = std::unique_ptr<IrsServer>(new IrsServerImpl(
       "127.0.0.1",
       7090,
-      "Console",
-      "",
+      "File",
+      "server.log",
       "Debug"));
 
   return server;
