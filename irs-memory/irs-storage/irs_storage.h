@@ -23,7 +23,8 @@ typedef enum _irs_storage_status
 
   IRS_STORAGE_NO,
   IRS_STORAGE_WRONG_PATH,
-  IRS_STORAGE_WRITE_ERROR
+  IRS_STORAGE_WRITE_ERROR,
+  IRS_STORAGE_READ_ERROR
 } irs_storage_status;
 
 irs_storage_status irs_storage_initialize(irs_storage ** storage, irs_char const * path);

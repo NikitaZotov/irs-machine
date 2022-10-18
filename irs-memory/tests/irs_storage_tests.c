@@ -26,6 +26,13 @@ TEST(irs_storage_init_and_add_documents)
   EXPECT_TRUE(irs_storage_add_documents(storage, documents) == IRS_STORAGE_OK);
   irs_list_destroy(documents);
 
+  irs_list * terms;
+  irs_list_init(&terms);
+  EXPECT_TRUE(irs_list_push_back(terms, "first"));
+
+  irs_storage_get_documents(storage, terms, &documents);
+  irs_list_destroy(terms);
+
   EXPECT_TRUE(irs_storage_shutdown(storage) == IRS_STORAGE_OK);
 }
 
