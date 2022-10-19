@@ -45,7 +45,7 @@ void IrsMemory::Add(std::vector<std::string> const & documents) const
   irs_list_destroy(list);
 }
 
-std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
+std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>>
   IrsMemory::Get(std::vector<std::string> const & terms) const
 {
   irs_list * list;
@@ -57,7 +57,7 @@ std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
   irs_list * documentsWithSignificancies;
   irs_memory_get_documents(m_storage, list, &documentsWithSignificancies);
 
-  std::unordered_map<std::string, std::unordered_map<std::string, float>> map;
+  std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>> result;
   irs_uint32 count = 0;
 
   irs_iterator * termsDocumentsIt = irs_list_iterator(documentsWithSignificancies);
@@ -65,26 +65,33 @@ std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
   {
     auto * documentsWithTerm = (irs_list *)irs_iterator_get(termsDocumentsIt);
 
-    std::unordered_map<std::string, float> documents;
+    std::unordered_map<irs_uint64, std::pair<std::string, irs_float>> documents;
 
     irs_iterator * termDocumentsIt = irs_list_iterator(documentsWithTerm);
     while (irs_iterator_next(termDocumentsIt))
     {
-      auto * pair = (irs_pair *)irs_iterator_get(termDocumentsIt);
+      auto * triple = (irs_list *)irs_iterator_get(termDocumentsIt);
 
-      std::string const documentStr = std::string((irs_char*)pair->first);
-      irs_float const termSignificancy = std::stof(std::string((irs_char*)pair->second));
-      documents.insert({ documentStr, termSignificancy });
+      irs_iterator * triple_it = irs_list_iterator(triple);
 
-      irs_mem_free(pair->first);
-      irs_mem_free(pair->second);
+      irs_iterator_next(triple_it);
+      irs_uint64 const offset = *(irs_uint64 *)irs_iterator_get(triple_it);
+
+      irs_iterator_next(triple_it);
+      std::string const documentStr = std::string((irs_char*)irs_iterator_get(triple_it));
+
+      irs_iterator_next(triple_it);
+      irs_float const termSignificancy = std::stof(std::string((irs_char*)irs_iterator_get(triple_it)));
+      irs_iterator_destroy(triple_it);
+
+      documents.insert({ offset, { documentStr, termSignificancy } });
     }
     irs_iterator_destroy(termDocumentsIt);
 
     irs_list_clear(documentsWithTerm);
     irs_list_destroy(documentsWithTerm);
 
-    map.insert({ terms[count], documents });
+    result.push_back({ documents });
 
     ++count;
   }
@@ -92,5 +99,5 @@ std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
 
   irs_list_destroy(list);
 
-  return map;
+  return result;
 }

@@ -530,7 +530,7 @@ irs_storage_status _irs_storage_read_documents_by_term(
 
   for (irs_uint64 i = 0; i < docs_with_term_size; ++i)
   {
-    irs_pair * pair = irs_mem_new(irs_pair, 1);
+    irs_list * triple = irs_mem_new(irs_list, 1);
 
     irs_uint64 doc_offset;
     if (irs_io_channel_read_chars(terms_channel, (irs_char *)&doc_offset, sizeof(irs_uint64), &read_bytes, NULL_PTR)
@@ -540,6 +540,10 @@ irs_storage_status _irs_storage_read_documents_by_term(
       irs_mem_free(terms_channel);
       return IRS_STORAGE_READ_ERROR;
     }
+
+    irs_uint64 * doc_offset_ptr = irs_mem_new(irs_uint64, 1);
+    *doc_offset_ptr = doc_offset;
+    irs_list_push_back(triple, doc_offset_ptr);
 
     // read document with size
     irs_io_channel_seek(documents_channel, doc_offset, IRS_IO_SEEK_SET, NULL_PTR);
@@ -562,7 +566,7 @@ irs_storage_status _irs_storage_read_documents_by_term(
         irs_mem_free(documents_channel);
         return IRS_STORAGE_READ_ERROR;
       }
-      pair->first = document;
+      irs_list_push_back(triple, document);
     }
 
     irs_uint64 significancy_size;
@@ -584,8 +588,8 @@ irs_storage_status _irs_storage_read_documents_by_term(
       return IRS_STORAGE_READ_ERROR;
     }
 
-    pair->second = significancy;
-    irs_list_push_back(*documents_with_significancies, pair);
+    irs_list_push_back(triple, significancy);
+    irs_list_push_back(*documents_with_significancies, triple);
   }
 
   irs_io_channel_shutdown(documents_channel, IRS_TRUE, NULL_PTR);

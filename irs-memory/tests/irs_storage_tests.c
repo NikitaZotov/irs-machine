@@ -47,11 +47,21 @@ TEST(irs_storage_init_and_add_documents)
     irs_iterator * term_documents_it = irs_list_iterator(documents_with_term);
     while (irs_iterator_next(term_documents_it))
     {
-      irs_pair * pair = irs_iterator_get(term_documents_it);
-      printf("%s - %s\n", (irs_char *)pair->first, (irs_char *)pair->second);
+      irs_list * triple = irs_iterator_get(term_documents_it);
 
-      irs_mem_free(pair->first);
-      irs_mem_free(pair->second);
+      irs_iterator * triple_it = irs_list_iterator(triple);
+
+      irs_iterator_next(triple_it);
+      irs_uint64 const offset = *(irs_uint64 *)irs_iterator_get(triple_it);
+
+      irs_iterator_next(triple_it);
+      irs_char * const documentStr = (irs_char *)irs_iterator_get(triple_it);
+
+      irs_iterator_next(triple_it);
+      irs_char * const termSignificancy = (irs_char *)irs_iterator_get(triple_it);
+      irs_iterator_destroy(triple_it);
+
+      printf("%lu - %s - %s\n", offset, (irs_char *)documentStr, (irs_char *)termSignificancy);
     }
     irs_iterator_destroy(term_documents_it);
 

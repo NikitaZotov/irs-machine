@@ -17,7 +17,7 @@ public:
 
   void Add(std::vector<std::string> const & documents) const;
 
-  [[nodiscard]] std::unordered_map<std::string, std::unordered_map<std::string, irs_float>>
+  [[nodiscard]] std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>>
     Get(std::vector<std::string> const & terms) const;
 
 private:
