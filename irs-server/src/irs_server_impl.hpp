@@ -24,14 +24,6 @@ public:
   ~IrsServerImpl() override;
 
 protected:
-  IrsServerMutex m_actionLock;
-  IrsServerMutex m_connectionLock;
-  IrsServerCondVar m_actionCond;
-
-  std::atomic<irs_bool> m_actionsRun;
-
-  IrsServerActions * m_actions;
-
   IrsMemory * m_memory;
 
   void Initialize() override;
