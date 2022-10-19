@@ -13,6 +13,6 @@ public:
 
     status = IRS_TRUE;
 
-    return { {} };
+    return std::vector<std::string>();
   }
 };

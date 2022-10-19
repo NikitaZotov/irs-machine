@@ -32,7 +32,7 @@ public:
       ++count;
     }
     IrsMemoryJsonPayload payload;
-    payload["attributes"] = termAttributes;
+    payload["attributes"] = termAttributes.size() ? termAttributes : IrsMemoryJsonPayload(std::vector<std::string>());
     payload["documents"] = documents;
 
     status = IRS_TRUE;

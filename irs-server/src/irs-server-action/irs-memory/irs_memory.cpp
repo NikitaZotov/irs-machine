@@ -64,6 +64,11 @@ std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>>
   while (irs_iterator_next(termsDocumentsIt))
   {
     auto * documentsWithTerm = (irs_list *)irs_iterator_get(termsDocumentsIt);
+    if (documentsWithTerm == nullptr)
+    {
+      result.push_back({});
+      continue;
+    }
 
     std::unordered_map<irs_uint64, std::pair<std::string, irs_float>> documents;
 

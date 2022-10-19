@@ -615,6 +615,12 @@ irs_storage_status irs_storage_get_documents(irs_storage * storage, irs_list con
     irs_uint64 * term_offset = irs_iterator_get(list_with_offset_it);
     irs_iterator_destroy(list_with_offset_it);
 
+    if (term_offset == NULL_PTR)
+    {
+      irs_list_push_back(*documents_list, NULL_PTR);
+      continue;
+    }
+
     irs_list * documents_with_significancies;
     if (_irs_storage_read_documents_by_term(storage, *term_offset, &documents_with_significancies) != IRS_STORAGE_OK)
     {

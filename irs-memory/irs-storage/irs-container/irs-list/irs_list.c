@@ -62,9 +62,6 @@ irs_struct_node * irs_list_push(irs_list * list, irs_struct_node * node, void * 
   if (list == NULL_PTR)
     return NULL_PTR;
 
-  if (data == NULL_PTR)
-    return NULL_PTR;
-
   if (node == NULL_PTR)
   {
     list->begin = irs_struct_node_init(data);
