@@ -7,8 +7,10 @@
 
 typedef struct _irs_storage
 {
-  irs_dictionary * term_offset_dictionary;
   irs_char * path;
+
+  irs_dictionary * term_offset_dictionary;
+  irs_char * term_offsets_path;
 
   irs_char * terms_path;
   irs_uint64 terms_size;
@@ -34,5 +36,9 @@ irs_storage_status irs_storage_shutdown(irs_storage * storage);
 irs_storage_status irs_storage_add_documents(irs_storage * storage, irs_list const * documents);
 
 irs_storage_status irs_storage_get_documents(irs_storage * storage, irs_list const * terms, irs_list ** documents);
+
+irs_storage_status irs_storage_load(irs_storage * storage);
+
+irs_storage_status irs_storage_save(irs_storage * storage);
 
 #endif //_irs_storage_

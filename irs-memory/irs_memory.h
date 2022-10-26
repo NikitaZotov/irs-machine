@@ -14,4 +14,8 @@ irs_bool irs_memory_add_documents(irs_storage * storage, irs_list const * docume
 
 irs_bool irs_memory_get_documents(irs_storage * storage, irs_list const * terms, irs_list ** documents);
 
+irs_bool irs_memory_load(irs_storage * storage);
+
+irs_bool irs_memory_save(irs_storage * storage);
+
 #endif //_irs_memory_

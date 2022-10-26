@@ -21,3 +21,13 @@ irs_bool irs_memory_get_documents(irs_storage * storage, irs_list const * terms,
 {
   return irs_storage_get_documents(storage, terms, documents) == IRS_STORAGE_OK;
 }
+
+irs_bool irs_memory_load(irs_storage * storage)
+{
+  return irs_storage_load(storage) == IRS_STORAGE_OK;
+}
+
+irs_bool irs_memory_save(irs_storage * storage)
+{
+  return irs_storage_save(storage) == IRS_STORAGE_OK;
+}

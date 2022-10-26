@@ -53,6 +53,9 @@ irs_storage_status irs_storage_initialize(irs_storage ** storage, irs_char const
     static irs_char const * documents_postfix = "documents.irsdb";
     _irs_init_db_path(path, documents_postfix, &(*storage)->documents_path);
     (*storage)->documents_size = 0;
+
+    static irs_char const * term_offsets = "term_offsets.irsdb";
+    _irs_init_db_path(path, term_offsets, &(*storage)->term_offsets_path);
   }
 
   return IRS_STORAGE_OK;
@@ -65,7 +68,9 @@ irs_storage_status irs_storage_shutdown(irs_storage * storage)
 
   {
     irs_mem_free(storage->path);
+
     irs_dictionary_destroy(storage->term_offset_dictionary);
+    irs_mem_free(storage->term_offsets_path);
 
     irs_mem_free(storage->terms_path);
     irs_mem_free(storage->documents_path);
@@ -402,6 +407,7 @@ void _irs_storage_pass_terms_doc_significancy_dictionary(irs_dictionary_node * n
   irs_uint64 * terms_offset_ptr = irs_mem_new(irs_uint64, 1);
   *terms_offset_ptr = storage->terms_size;
   irs_dictionary_append(storage->term_offset_dictionary, term, term_size, terms_offset_ptr);
+  irs_dictionary_append(storage->term_offset_dictionary, term, term_size, term);
 
   // save term in db
   irs_uint64 written_bytes = 0;
@@ -438,7 +444,6 @@ void _irs_storage_pass_terms_doc_significancy_dictionary(irs_dictionary_node * n
   }
 
   irs_dictionary_destroy(doc_offset_dictionary);
-  irs_mem_free(term);
   irs_mem_free(docs_with_term);
 }
 
@@ -632,6 +637,104 @@ irs_storage_status irs_storage_get_documents(irs_storage * storage, irs_list con
     irs_list_push_back(*documents_list, documents_with_significancies);
   }
   irs_iterator_destroy(it);
+
+  return IRS_STORAGE_OK;
+}
+
+void _irs_storage_read_term_offsets(irs_storage * storage, irs_io_channel * channel)
+{
+  // save term in db
+  irs_uint64 written_bytes = 0;
+  while (IRS_TRUE)
+  {
+    irs_uint64 term_size;
+    if (irs_io_channel_read_chars(channel, (irs_char *)&term_size, sizeof(irs_uint64), &written_bytes, NULL_PTR)
+        != IRS_IO_STATUS_NORMAL || sizeof(irs_uint64) != written_bytes)
+      break;
+
+    irs_char * term = irs_mem_new(irs_char, 1);
+    if (irs_io_channel_read_chars(channel, (irs_char *)term, term_size, &written_bytes, NULL_PTR)
+        != IRS_IO_STATUS_NORMAL || term_size != written_bytes)
+      break;
+
+    irs_uint64 * term_offset = irs_mem_new(irs_uint64, 1);
+    if (irs_io_channel_read_chars(channel, (irs_char *)term_offset, sizeof(irs_uint64), &written_bytes, NULL_PTR)
+        != IRS_IO_STATUS_NORMAL || sizeof(irs_uint64) != written_bytes)
+      break;
+
+    irs_dictionary_append(storage->term_offset_dictionary, term, term_size, term_offset);
+    irs_dictionary_append(storage->term_offset_dictionary, term, term_size, term);
+  }
+}
+
+irs_storage_status irs_storage_load(irs_storage * storage)
+{
+  irs_io_channel * term_offsets_channel = irs_io_new_channel(storage->term_offsets_path, "r", NULL_PTR);
+  irs_io_channel_set_encoding(term_offsets_channel, NULL_PTR, NULL_PTR);
+
+  _irs_storage_read_term_offsets(storage, term_offsets_channel);
+
+  irs_io_channel_shutdown(term_offsets_channel, IRS_TRUE, NULL_PTR);
+  irs_mem_free(term_offsets_channel);
+
+  return IRS_STORAGE_OK;
+}
+
+void _irs_storage_write_term_offsets(irs_dictionary_node * node, void ** arguments)
+{
+  if (node->data_list == NULL_PTR)
+    return;
+
+  irs_iterator * list_it = irs_list_iterator(node->data_list);
+  irs_iterator_next(list_it);
+  irs_uint64 * const term_offset = irs_iterator_get(list_it);
+
+  irs_iterator_next(list_it);
+  irs_char * const term = irs_iterator_get(list_it);
+  irs_uint64 const term_size = irs_str_len(term);
+  irs_iterator_destroy(list_it);
+
+  irs_io_channel * channel = arguments[0];
+
+  // save term in db
+  irs_uint64 written_bytes = 0;
+  {
+    if (irs_io_channel_write_chars(channel, (irs_char *)&term_size, sizeof(irs_uint64), &written_bytes, NULL_PTR)
+        != IRS_IO_STATUS_NORMAL || sizeof(irs_uint64) != written_bytes)
+    {
+      irs_io_channel_shutdown(channel, IRS_TRUE, NULL_PTR);
+      irs_mem_free(channel);
+      g_error("Error occurred: term size didn't written.");
+    }
+
+    if (irs_io_channel_write_chars(channel, (irs_char *)term, term_size, &written_bytes, NULL_PTR)
+        != IRS_IO_STATUS_NORMAL || term_size != written_bytes)
+    {
+      irs_io_channel_shutdown(channel, IRS_TRUE, NULL_PTR);
+      irs_mem_free(channel);
+      g_error("Error occurred: term didn't written.");
+    }
+
+    if (irs_io_channel_write_chars(channel, (irs_char *)term_offset, sizeof(irs_uint64), &written_bytes, NULL_PTR)
+        != IRS_IO_STATUS_NORMAL || sizeof(irs_uint64) != written_bytes)
+    {
+      irs_io_channel_shutdown(channel, IRS_TRUE, NULL_PTR);
+      irs_mem_free(channel);
+      g_error("Error occurred: term offset didn't written.");
+    }
+  }
+}
+
+irs_storage_status irs_storage_save(irs_storage * storage)
+{
+  irs_io_channel * term_offsets_channel = irs_io_new_channel(storage->term_offsets_path, "w", NULL_PTR);
+  irs_io_channel_set_encoding(term_offsets_channel, NULL_PTR, NULL_PTR);
+
+  irs_dictionary_visit_down_nodes(
+      storage->term_offset_dictionary, _irs_storage_write_term_offsets, (void **)&term_offsets_channel);
+
+  irs_io_channel_shutdown(term_offsets_channel, IRS_TRUE, NULL_PTR);
+  irs_mem_free(term_offsets_channel);
 
   return IRS_STORAGE_OK;
 }

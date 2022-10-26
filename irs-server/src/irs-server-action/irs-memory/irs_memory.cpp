@@ -13,6 +13,7 @@ IrsMemory * IrsMemory::m_instance = nullptr;
 IrsMemory::IrsMemory(irs_char const * path)
 {
   irs_memory_initialize(&m_storage, path);
+  irs_memory_load(m_storage);
 }
 
 IrsMemory * IrsMemory::GetInstance(irs_char const * path)
@@ -27,6 +28,7 @@ IrsMemory * IrsMemory::GetInstance(irs_char const * path)
 
 IrsMemory::~IrsMemory()
 {
+  irs_memory_save(m_storage);
   irs_memory_shutdown(m_storage);
 
   m_instance = nullptr;
