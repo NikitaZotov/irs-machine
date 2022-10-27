@@ -310,6 +310,10 @@ irs_dictionary * _irs_storage_assign_terms_in_documents(irs_list * document_offs
       {
         irs_float const frequency = _irs_storage_calculate_term_frequency(term, document_terms);
         irs_float const significancy = _irs_storage_calculate_term_significancy(frequency, reverse_frequency);
+
+        if (significancy <= 0.f)
+          continue;
+
         irs_char * significancy_str;
         irs_float_to_str_float(significancy, significancy_str);
 
@@ -560,6 +564,9 @@ irs_storage_status _irs_storage_read_documents_by_term(
         irs_mem_free(documents_channel);
         return IRS_STORAGE_READ_ERROR;
       }
+
+      if (doc_size > INT_MAX)
+        continue;
 
       irs_char * document = irs_mem_new(irs_char, doc_size + 1);
       if (irs_io_channel_read_chars(documents_channel, (irs_char *)document, doc_size, &read_bytes, NULL_PTR)
