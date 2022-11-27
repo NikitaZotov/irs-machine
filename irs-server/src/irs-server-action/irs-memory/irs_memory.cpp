@@ -3,9 +3,8 @@
 extern "C"
 {
 #include "irs_memory.h"
-#include "irs-storage/irs-container/irs-list/irs_list.h"
-#include "irs-storage/irs-container/irs-pair/irs_pair.h"
-#include "irs-storage/irs-base/irs_allocator.h"
+#include "irs-container/irs-list/irs_list.h"
+#include "irs-container/irs-pair/irs_pair.h"
 }
 
 IrsMemory * IrsMemory::m_instance = nullptr;

@@ -6,7 +6,7 @@
 #include "irs_server_log.hpp"
 
 #include "irs-server-action/irs_server_action.hpp"
-#include "irs-storage/irs-base/irs_types.h"
+#include "irs-base/irs_types.h"
 
 class IrsServer
 {

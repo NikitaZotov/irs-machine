@@ -5,7 +5,7 @@
 #include <unordered_set>
 
 #include "irs_server_defines.hpp"
-#include "irs-storage/irs-base/irs_types.h"
+#include "irs-base/irs_types.h"
 
 class IrsServerLog
 {

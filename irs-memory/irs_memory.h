@@ -1,7 +1,7 @@
 #ifndef _irs_memory_
 #define _irs_memory_
 
-#include "irs-storage/irs-base/irs_types.h"
+#include "irs-base/irs_types.h"
 
 typedef struct _irs_list irs_list;
 typedef struct _irs_storage irs_storage;

@@ -1,6 +1,6 @@
 #include "irs_memory.h"
 
-#include "irs-storage/irs-base/irs_allocator.h"
+#include "irs-base/irs_allocator.h"
 #include "irs-storage/irs_storage.h"
 #include "irs-engine/irs_engine.h"
 

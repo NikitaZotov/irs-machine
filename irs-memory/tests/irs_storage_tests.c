@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../irs-storage/irs-base/irs_types.h"
+#include "irs-base/irs_types.h"
 #include "../irs-storage/irs_storage.h"
 
 #define EXPECT_IRS_TRUE(expression) if (expression == IRS_FALSE) g_error("Expect IRS_TRUE, but gotten IRS_FALSE")

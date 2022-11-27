@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "irs-storage/irs-base/irs_types.h"
+#include "irs-base/irs_types.h"
 
 #include "../irs_server_defines.hpp"
 #include "irs_memory_json_payload.hpp"

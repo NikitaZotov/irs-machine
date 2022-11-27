@@ -1,9 +1,9 @@
 #include "irs_engine.h"
 
-#include "../irs-storage/irs-file-system/irs_file_system.h"
-#include "../irs-storage/irs-base/irs_allocator.h"
-#include "../irs-storage/irs-container/irs-string/irs_string.h"
-#include "../irs-storage/irs-container/irs-pair/irs_pair.h"
+#include "irs-file-system/irs_file_system.h"
+#include "irs-base/irs_allocator.h"
+#include "irs-container/irs-string/irs_string.h"
+#include "irs-container/irs-pair/irs_pair.h"
 
 irs_uint8 _irs_dictionary_children_size()
 {

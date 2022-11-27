@@ -1,9 +1,9 @@
 #ifndef _irs_engine_
 #define _irs_engine_
 
-#include "../irs-storage/irs-base/irs_types.h"
-#include "../irs-storage/irs-container/irs-list/irs_list.h"
-#include "../irs-storage/irs-container/irs-dictionary/irs_dictionary.h"
+#include "irs-base/irs_types.h"
+#include "irs-container/irs-list/irs_list.h"
+#include "irs-container/irs-dictionary/irs_dictionary.h"
 
 typedef struct _irs_engine
 {

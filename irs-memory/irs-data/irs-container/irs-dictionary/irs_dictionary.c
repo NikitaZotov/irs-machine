@@ -10,7 +10,7 @@
 #include "irs_dictionary_private.h"
 
 #include "../../irs-base/irs_allocator.h"
-#include "../../irs-container/irs-string/irs_string.h"
+#include "../irs-string/irs_string.h"
 
 #define SC_DICTIONARY_NODE_IS_VALID(__node) ((__node) != NULL_PTR)
 #define SC_DICTIONARY_NODE_IS_NOT_VALID(__node) ((__node) == NULL_PTR)

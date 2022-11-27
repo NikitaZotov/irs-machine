@@ -4,10 +4,9 @@
 #include <unordered_map>
 #include <string>
 
-#include "irs-storage/irs-base/irs_types.h"
-#include "irs_memory.h"
+#include "irs-base/irs_types.h"
 
-typedef struct _irs_storage irs_storage;
+typedef struct _irs_memory irs_memory;
 
 class IrsMemory
 {
