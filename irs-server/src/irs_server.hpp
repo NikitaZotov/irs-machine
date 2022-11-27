@@ -22,19 +22,19 @@ public:
   {
     m_instance = new IrsServerCore();
     {
-      LogMessage(IrsServerLogMessages::app, "IRS-machine socket data");
+      LogMessage(IrsServerLogMessages::app, "Irs-machine socket data");
       LogMessage(IrsServerLogMessages::app, "\tHost name: " + m_hostName);
       LogMessage(IrsServerLogMessages::app, "\tPort: " + std::to_string(m_port));
     }
     {
-      LogMessage(IrsServerLogMessages::app, "IRS-machine log");
+      LogMessage(IrsServerLogMessages::app, "Irs-machine log");
       LogMessage(IrsServerLogMessages::app, "\tLog type: " + logType);
       LogMessage(
           IrsServerLogMessages::app,
           "\tLog file: " + ((logType != IRS_SERVER_FILE_TYPE || logFile.empty()) ? "No" : logFile));
       LogMessage(IrsServerLogMessages::app, "\tLog level: " + logLevel);
     }
-    LogMessage(IrsServerLogMessages::app, "IRS-machine launched");
+    LogMessage(IrsServerLogMessages::app, "Irs-machine launched");
     m_log = new IrsServerLog(m_instance, logType, logFile, logLevel);
   }
 

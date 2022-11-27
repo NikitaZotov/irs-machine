@@ -7,16 +7,18 @@ IrsServerImpl::IrsServerImpl(
     IrsServerPort port,
     std::string const & logType,
     std::string const & logFile,
-    std::string const & logLevel)
-  : IrsServer(host, port, logType, logFile, logLevel),
-    m_memory(nullptr)
+    std::string const & logLevel,
+    IrsMemoryData const & data)
+  : IrsServer(host, port, logType, logFile, logLevel)
 {
+  m_memory = IrsMemory::GetInstance(data.dbPath.c_str(), data.dataPath.c_str());
+
+  LogMessage(IrsServerLogMessages::app, "Database path: " + data.dbPath);
+  LogMessage(IrsServerLogMessages::app, "Data path: " + data.dbPath);
 }
 
 void IrsServerImpl::Initialize()
 {
-  m_memory = IrsMemory::GetInstance("db/", "data/langs/");
-
   m_instance->set_message_handler(bind(&IrsServerImpl::OnMessage, this, ::_1, ::_2));
 }
 

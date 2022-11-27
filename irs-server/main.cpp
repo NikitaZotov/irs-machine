@@ -5,15 +5,31 @@
 #include "irs_server_factory.hpp"
 
 #include "irs_signal_handler.hpp"
+#include "irs-config/irs_options.hpp"
 
 irs_int32 main(irs_int32 argc, irs_char * argv[])
 try
 {
+  IrsOptions options{argc, argv};
+  if (options.Has("help"))
+  {
+    std::cout << "IRS-MACHINE USAGE\n\n"
+              << "--config|-c -- Path to configuration file\n"
+              << "--host|-h -- Irs-server host name, ip-address\n"
+              << "--port|-p -- Irs-server port\n"
+              << "--help -- Display this message\n";
+    return EXIT_SUCCESS;
+  }
+
+  std::string configFile;
+  if (options.Has("config", "c"))
+    configFile = options.Get("config", "c").second;
+
   irs_bool status = IRS_FALSE;
   std::unique_ptr<IrsServer> server;
   try
   {
-    server = IrsServerFactory::ConfigureIrsServer();
+    server = IrsServerFactory::ConfigureIrsServer(configFile);
     server->Run();
     status = IRS_TRUE;
   }

@@ -1,3 +1,4 @@
+add_subdirectory(irs-config)
 add_subdirectory(src)
 
 file(GLOB_RECURSE SOURCES
@@ -8,8 +9,8 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_executable(irs-server main.cpp ${SOURCES})
-include_directories(${IRS_MEMORY_SRC})
-target_link_libraries(irs-server irs-server-impl irs-memory)
+include_directories(${IRS_MEMORY_SRC} ${IRS_CONFIG_SRC})
+target_link_libraries(irs-server irs-server-impl irs-memory irs-config)
 
 #if(${IRS_BUILD_TESTS})
 #    include(tests/CMakeLists.txt)

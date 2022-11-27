@@ -17,7 +17,8 @@ public:
       IrsServerPort port,
       std::string const & logType,
       std::string const & logFile,
-      std::string const & logLevel);
+      std::string const & logLevel,
+      IrsMemoryData const & memoryData);
 
   void EmitActions() override;
 

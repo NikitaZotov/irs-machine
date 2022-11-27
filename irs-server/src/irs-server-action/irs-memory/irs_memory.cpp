@@ -107,3 +107,24 @@ std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>>
 
   return result;
 }
+
+std::vector<std::string> IrsMemory::GetLangs(std::vector<std::string> const & documents)
+{
+  irs_list * list;
+  irs_list_init(&list);
+
+  for (auto const & document : documents)
+    irs_list_push_back(list, (irs_char *)document.c_str());
+
+  irs_list * langs;
+  irs_memory_get_documents_langs(m_memory, list, &langs);
+
+  std::vector<std::string> langs_vector;
+  irs_iterator * it = irs_list_iterator(langs);
+  while (irs_iterator_next(it))
+  {
+    langs_vector.emplace_back((irs_char *)irs_iterator_get(it));
+  }
+
+  return langs_vector;
+}
