@@ -27,4 +27,6 @@ irs_engine_status irs_engine_initialize(irs_engine ** engine, irs_char const * p
 
 irs_engine_status irs_engine_shutdown(irs_engine * engine);
 
+irs_list * irs_engine_define_documents_languages(irs_engine * engine, irs_list * documents);
+
 #endif //_irs_engine_

@@ -138,7 +138,7 @@ irs_storage_status _irs_storage_write_documents(
 
 irs_list * _irs_storage_get_document_terms(irs_char * document)
 {
-  irs_char delim[] = " ,.-\0";
+  static const irs_char delim[] = " ,.-\0()[]_";
   irs_uint64 size = irs_str_len(document);
   irs_char string[size + 1];
   irs_mem_cpy(string, document, size);
