@@ -42,5 +42,6 @@ protected:
   std::map<std::string, IrsMemoryJsonCommand *> m_commands = {
       { "add_documents", new IrsMemoryAddDocumentsCommand() },
       { "get_documents", new IrsMemoryGetDocumentsCommand() },
+      { "get_langs", new IrsMemoryGetDocumentsLangsCommand() },
   };
 };

@@ -108,7 +108,7 @@ std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>>
   return result;
 }
 
-std::vector<std::string> IrsMemory::GetLangs(std::vector<std::string> const & documents)
+std::vector<std::string> IrsMemory::GetLangs(std::vector<std::string> const & documents) const
 {
   irs_list * list;
   irs_list_init(&list);
