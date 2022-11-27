@@ -1,3 +1,4 @@
+add_subdirectory(irs-engine)
 add_subdirectory(irs-storage)
 
 add_library(irs-memory SHARED "irs_memory.c" "irs_memory.h")
