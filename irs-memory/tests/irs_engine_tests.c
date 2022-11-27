@@ -10,6 +10,8 @@ TEST(irs_engine_init_shut)
 {
   irs_engine * engine;
   EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "langs/") == IRS_ENGINE_OK);
+
+  EXPECT_IRS_TRUE(irs_engine_shutdown(engine) == IRS_ENGINE_OK);
 }
 
 TEST(irs_engine_define_documents_langs)
@@ -43,6 +45,9 @@ TEST(irs_engine_define_documents_langs)
     printf("%s", lang);
   }
   irs_iterator_destroy(it);
+  irs_list_destroy(langs);
+
+  EXPECT_IRS_TRUE(irs_engine_shutdown(engine) == IRS_ENGINE_OK);
 }
 
 irs_int32 main()
