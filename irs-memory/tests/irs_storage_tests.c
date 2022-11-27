@@ -1,9 +1,7 @@
 #include <stdio.h>
 
-#include "../irs-storage/irs-base/irs_allocator.h"
 #include "../irs-storage/irs-base/irs_types.h"
 #include "../irs-storage/irs_storage.h"
-#include "../irs-storage/irs-container/irs-pair/irs_pair.h"
 
 #define EXPECT_IRS_TRUE(expression) if (expression == IRS_FALSE) g_error("Expect IRS_TRUE, but gotten IRS_FALSE")
 

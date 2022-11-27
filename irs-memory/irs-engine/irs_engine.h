@@ -8,6 +8,8 @@
 typedef struct _irs_engine
 {
   irs_char * path;
+  irs_list * lang_key_words;
+
 } irs_engine;
 
 typedef enum _irs_engine_status
@@ -22,3 +24,7 @@ typedef enum _irs_engine_status
 
 
 irs_engine_status irs_engine_initialize(irs_engine ** engine, irs_char const * path);
+
+irs_engine_status irs_engine_shutdown(irs_engine * engine);
+
+#endif //_irs_engine_

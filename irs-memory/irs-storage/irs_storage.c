@@ -23,7 +23,7 @@ void _irs_char_to_irs_int(irs_char ch, irs_uint8 * ch_num, irs_uint8 * mask)
 
 void _irs_init_db_path(irs_char const * path, irs_char const * postfix, irs_char ** out_path)
 {
-  irs_uint32 size = irs_str_len(path) + irs_str_len(postfix);
+  irs_uint32 size = irs_str_len(path) + irs_str_len(postfix) + 2;
   *out_path = irs_mem_new(irs_char, size + 1);
   irs_str_printf(*out_path, size, "%s/%s", path, postfix);
 }
