@@ -15,7 +15,7 @@ IrsServerImpl::IrsServerImpl(
 
 void IrsServerImpl::Initialize()
 {
-  m_memory = IrsMemory::GetInstance("db/");
+  m_memory = IrsMemory::GetInstance("db/", "data/langs/");
 
   m_instance->set_message_handler(bind(&IrsServerImpl::OnMessage, this, ::_1, ::_2));
 }

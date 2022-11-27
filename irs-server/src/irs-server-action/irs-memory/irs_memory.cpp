@@ -10,17 +10,17 @@ extern "C"
 
 IrsMemory * IrsMemory::m_instance = nullptr;
 
-IrsMemory::IrsMemory(irs_char const * path)
+IrsMemory::IrsMemory(irs_char const * path, irs_char const * data_path)
 {
-  irs_memory_initialize(&m_storage, path);
-  irs_memory_load(m_storage);
+  irs_memory_initialize(&m_memory, path, data_path);
+  irs_memory_load(m_memory);
 }
 
-IrsMemory * IrsMemory::GetInstance(irs_char const * path)
+IrsMemory * IrsMemory::GetInstance(irs_char const * path, irs_char const * data_path)
 {
   if (m_instance == nullptr)
   {
-    return m_instance = new IrsMemory(path);
+    return m_instance = new IrsMemory(path, data_path);
   }
 
   return m_instance;
@@ -28,8 +28,8 @@ IrsMemory * IrsMemory::GetInstance(irs_char const * path)
 
 IrsMemory::~IrsMemory()
 {
-  irs_memory_save(m_storage);
-  irs_memory_shutdown(m_storage);
+  irs_memory_save(m_memory);
+  irs_memory_shutdown(m_memory);
 
   m_instance = nullptr;
 }
@@ -42,7 +42,7 @@ void IrsMemory::Add(std::vector<std::string> const & documents) const
   for (auto const & doc : documents)
     irs_list_push_back(list, (irs_char *)doc.c_str());
 
-  irs_memory_add_documents(m_storage, list);
+  irs_memory_add_documents(m_memory, list);
 
   irs_list_destroy(list);
 }
@@ -57,7 +57,7 @@ std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>>
     irs_list_push_back(list, (irs_char *)term.c_str());
 
   irs_list * documentsWithSignificancies;
-  irs_memory_get_documents(m_storage, list, &documentsWithSignificancies);
+  irs_memory_get_documents(m_memory, list, &documentsWithSignificancies);
 
   std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>> result;
   irs_uint32 count = 0;

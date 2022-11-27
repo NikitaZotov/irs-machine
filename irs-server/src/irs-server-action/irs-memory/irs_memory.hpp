@@ -5,13 +5,14 @@
 #include <string>
 
 #include "irs-storage/irs-base/irs_types.h"
+#include "irs_memory.h"
 
 typedef struct _irs_storage irs_storage;
 
 class IrsMemory
 {
 public:
-  static IrsMemory * GetInstance(irs_char const * path);
+  static IrsMemory * GetInstance(irs_char const * path, irs_char const * data_path);
 
   ~IrsMemory();
 
@@ -23,7 +24,7 @@ public:
 private:
   static IrsMemory * m_instance;
 
-  irs_storage * m_storage;
+  irs_memory * m_memory;
 
-  explicit IrsMemory(irs_char const * path);
+  explicit IrsMemory(irs_char const * path, irs_char const * data_path);
 };

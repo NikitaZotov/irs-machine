@@ -5,17 +5,26 @@
 
 typedef struct _irs_list irs_list;
 typedef struct _irs_storage irs_storage;
+typedef struct _irs_engine irs_engine;
 
-irs_bool irs_memory_initialize(irs_storage ** storage, irs_char const * path);
+typedef struct _irs_memory
+{
+  irs_storage * storage;
+  irs_engine * engine;
+} irs_memory;
 
-irs_bool irs_memory_shutdown(irs_storage * storage);
+irs_bool irs_memory_initialize(irs_memory ** memory, irs_char const * path, irs_char const * data_path);
 
-irs_bool irs_memory_add_documents(irs_storage * storage, irs_list const * documents);
+irs_bool irs_memory_shutdown(irs_memory * memory);
 
-irs_bool irs_memory_get_documents(irs_storage * storage, irs_list const * terms, irs_list ** documents);
+irs_bool irs_memory_add_documents(irs_memory * memory, irs_list const * documents);
 
-irs_bool irs_memory_load(irs_storage * storage);
+irs_bool irs_memory_get_documents(irs_memory * memory, irs_list const * terms, irs_list ** documents);
 
-irs_bool irs_memory_save(irs_storage * storage);
+irs_bool irs_memory_load(irs_memory * memory);
+
+irs_bool irs_memory_save(irs_memory * memory);
+
+irs_bool irs_memory_get_documents_langs(irs_memory * memory, irs_list const * documents, irs_list ** langs);
 
 #endif //_irs_memory_
