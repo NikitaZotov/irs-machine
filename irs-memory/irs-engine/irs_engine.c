@@ -29,7 +29,7 @@ irs_pair * _irs_engine_read_lang_file(irs_dictionary * dictionary, irs_char cons
   irs_pair * dictionary_lang;
   GIOStatus status = g_io_channel_read_line(channel, &word, &length, NULL_PTR, NULL_PTR);
   irs_char * copy;
-  irs_str_cpy(copy, word, irs_str_len(word));
+  irs_str_cpy(copy, word, length - 1);
   irs_pair_initialize(&dictionary_lang, dictionary, copy);
 
   while (status != G_IO_STATUS_EOF)
