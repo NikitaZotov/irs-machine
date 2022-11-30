@@ -94,6 +94,25 @@ irs_struct_node * irs_list_push_back(irs_list * list, void * data)
   return irs_list_push(list, list->end ? list->end->prev : NULL_PTR, data);
 }
 
+irs_struct_node * irs_list_push_front(irs_list * list, irs_struct_node * node, void * data)
+{
+  if (list == NULL_PTR)
+    return NULL_PTR;
+
+  irs_struct_node * temp = node->prev;
+  node->prev = irs_struct_node_init(data);
+  node->prev->next = node;
+  node->prev->prev = temp;
+  if (temp != NULL_PTR)
+    temp->next = node->prev;
+  else
+    list->begin = node->prev;
+
+  ++list->size;
+
+  return node->prev;
+}
+
 irs_struct_node * irs_list_pop_back(irs_list * list)
 {
   if (list == NULL_PTR)
@@ -174,4 +193,12 @@ irs_iterator * irs_list_iterator(irs_list * list)
     return NULL_PTR;
 
   return irs_iterator_init(list->begin, list->end);
+}
+
+irs_iterator * irs_list_reverse_iterator(irs_list * list)
+{
+  if (list == NULL_PTR)
+    return NULL_PTR;
+
+  return irs_iterator_init(list->end, list->end);
 }

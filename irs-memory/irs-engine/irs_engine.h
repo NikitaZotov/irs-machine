@@ -29,4 +29,6 @@ irs_engine_status irs_engine_shutdown(irs_engine * engine);
 
 irs_list * irs_engine_define_documents_languages(irs_engine * engine, irs_list * documents);
 
+irs_list * irs_engine_get_documents_summarizations(irs_engine * engine, irs_list * documents);
+
 #endif //_irs_engine_

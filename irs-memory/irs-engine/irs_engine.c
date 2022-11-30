@@ -231,7 +231,7 @@ irs_list * irs_engine_define_documents_languages(irs_engine * engine, irs_list *
 
 irs_list * _irs_storage_get_document_sentences(irs_char * document)
 {
-  static const irs_char delim[] = " .!?";
+  static const irs_char delim[] = ".!?";
   irs_uint64 size = irs_str_len(document);
   irs_char string[size + 1];
   irs_mem_cpy(string, document, size);
@@ -280,7 +280,7 @@ irs_char * _irs_storage_define_document_part_with_sentence(irs_char * document, 
   for (; doc_part_with_sent_start != document && *doc_part_with_sent_start != PART_SIGN; --doc_part_with_sent_start);
 
   irs_char * doc_end = document + irs_str_len(document);
-  irs_char * doc_part_with_sent_end = isent;
+  irs_char * doc_part_with_sent_end = isent + 1;
   for (; doc_part_with_sent_end != doc_end && *doc_part_with_sent_end != PART_SIGN; ++doc_part_with_sent_end);
 
   irs_char * sent_part;
@@ -290,70 +290,157 @@ irs_char * _irs_storage_define_document_part_with_sentence(irs_char * document, 
   return sent_part;
 }
 
-irs_float _irs_define_sentence_score(irs_char * document, irs_char * sentence)
+irs_uint64 _irs_define_sentence_score(irs_char * document, irs_char * sentence)
 {
   irs_float const posd = _irs_storage_define_document_sentence_posd(document, sentence);
 
   irs_char * doc_part_with_sent = _irs_storage_define_document_part_with_sentence(document, sentence);
   irs_float const posp = _irs_storage_define_document_sentence_posp(doc_part_with_sent, sentence);
 
-  irs_float const score = posd * posp;
+  static irs_float const SCALE = 10000;
+  irs_uint64 const score = (irs_uint64)(posd * posp * SCALE);
   return score;
+}
+
+irs_list * _irs_sort_doc_sentences_by_score(irs_list * sents_scores)
+{
+  irs_list * sorted_sents_scores;
+  irs_list_init(&sorted_sents_scores);
+
+  irs_iterator * sent_score_it = irs_list_iterator(sents_scores);
+  if (irs_iterator_next(sent_score_it))
+  {
+    irs_pair * pair = (irs_pair *)irs_iterator_get(sent_score_it);
+    irs_list_push_back(sorted_sents_scores, pair);
+  }
+
+  while (irs_iterator_next(sent_score_it))
+  {
+    irs_pair * sent_score_index = (irs_pair *)irs_iterator_get(sent_score_it);
+    irs_uint64 const sent_score = (irs_uint64)sent_score_index->first;
+
+    irs_iterator * other_score_sent_it = irs_list_iterator(sorted_sents_scores);
+    while (irs_iterator_next(other_score_sent_it))
+    {
+      irs_pair * other_sent_score_index = (irs_pair *)irs_iterator_get(other_score_sent_it);
+      irs_uint64 const other_sent_score = (irs_uint64)other_sent_score_index->first;
+
+      if (sent_score <= other_sent_score)
+      {
+        irs_list_push_front(sorted_sents_scores, other_score_sent_it->current, sent_score_index);
+        break;
+      }
+      else
+      {
+        if (irs_iterator_next(sent_score_it) == IRS_FALSE)
+        {
+          irs_list_push_back(sorted_sents_scores, sent_score_index);
+          break;
+        }
+        irs_iterator_prev(sent_score_it);
+      }
+    }
+    irs_iterator_destroy(other_score_sent_it);
+  }
+  irs_iterator_destroy(sent_score_it);
+
+  return sorted_sents_scores;
+}
+
+irs_list * _irs_get_sentences_scores(irs_char * document, irs_list * sentences)
+{
+  irs_list * sents_scores;
+  irs_list_init(&sents_scores);
+
+  irs_iterator * sent_it = irs_list_iterator(sentences);
+  irs_uint64 i = 0;
+  while (irs_iterator_next(sent_it))
+  {
+    irs_char * sentence = irs_iterator_get(sent_it);
+    irs_uint64 const sent_score = _irs_define_sentence_score(document, sentence);
+
+    irs_pair * sent_score_index;
+    irs_pair_initialize(&sent_score_index, (void *)sent_score, (void *)i);
+
+    irs_list_push_back(sents_scores, sent_score_index);
+    ++i;
+  }
+  irs_iterator_destroy(sent_it);
+
+  return sents_scores;
+}
+
+irs_list * _irs_get_document_summarization(irs_list * sentences, irs_list * sorted_sents_scores)
+{
+  irs_uint64 i = 0;
+  static irs_uint64 const MAX_SENT_NUMBER = 10;
+
+  irs_char ** summar = irs_mem_new(irs_char *, sorted_sents_scores->size);
+
+  irs_iterator * sorted_score_sent_it = irs_list_reverse_iterator(sorted_sents_scores);
+  while (irs_iterator_prev(sorted_score_sent_it) && i < MAX_SENT_NUMBER)
+  {
+    irs_pair * sent_score_index = (irs_pair *)irs_iterator_get(sorted_score_sent_it);
+    irs_uint64 const index = (irs_uint64)sent_score_index->second;
+
+    irs_uint64 j = 0;
+    irs_iterator * sent_it = irs_list_iterator(sentences);
+    while (irs_iterator_next(sent_it))
+    {
+      if (j == index - 1)
+      {
+        irs_char * sentence = irs_iterator_get(sent_it);
+        irs_str_cpy(summar[j], sentence, irs_str_len(sentence));
+        break;
+      }
+      ++j;
+    }
+    irs_iterator_destroy(sent_it);
+
+    ++i;
+  }
+  irs_iterator_destroy(sorted_score_sent_it);
+
+  irs_list * summar_sents;
+  irs_list_init(&summar_sents);
+
+  for (i = 0; i < sorted_sents_scores->size; ++i)
+  {
+    if (summar[i] != NULL_PTR)
+    {
+      irs_list_push_back(summar_sents, summar[i]);
+    }
+  }
+
+  return summar_sents;
 }
 
 irs_list * irs_engine_get_documents_summarizations(irs_engine * engine, irs_list * documents)
 {
+  irs_list * summarizations;
+  irs_list_init(&summarizations);
+
   irs_iterator * doc_it = irs_list_iterator(documents);
   while (irs_iterator_next(doc_it))
   {
     irs_char * document = irs_iterator_get(doc_it);
 
     irs_list * sentences = _irs_storage_get_document_sentences(document);
-    irs_list * sents_scores;
-    irs_list_init(&sents_scores);
+    irs_list * sents_scores = _irs_get_sentences_scores(document, sentences);
 
-    irs_iterator * sent_it = irs_list_iterator(sentences);
-    irs_uint64 i = 0;
-
-    while (irs_iterator_next(sent_it))
-    {
-      irs_char * sentence = irs_iterator_get(sent_it);
-      irs_float const sent_score = _irs_define_sentence_score(document, sentence);
-
-      irs_pair sent_score_index;
-      sent_score_index.first = (void *)&sent_score;
-      sent_score_index.second = &i;
-
-      irs_list_push_back(sents_scores, (irs_pair *)&sent_score_index);
-      ++i;
-    }
-    irs_iterator_destroy(sent_it);
-
-    irs_iterator * sent_score_it = irs_list_iterator(sents_scores);
-
-    irs_list * sorted_sents_scores;
-    irs_list_init(&sorted_sents_scores);
-    if (irs_iterator_next(sent_score_it))
-    {
-      irs_pair const pair = *(irs_pair *)irs_iterator_get(sent_score_it);
-      irs_list_push_back(sorted_sents_scores, (irs_pair *)&pair);
-    }
-
-    while (irs_iterator_next(sent_score_it))
-    {
-
-
-      irs_pair const pair = *(irs_pair *)irs_iterator_get(sent_score_it);
-
-
-    }
-    irs_iterator_destroy(sent_score_it);
-
+    irs_list * sorted_sents_scores = _irs_sort_doc_sentences_by_score(sents_scores);
     irs_list_destroy(sents_scores);
 
+    irs_list * summar = _irs_get_document_summarization(sentences, sorted_sents_scores);
+    irs_list_push_back(summarizations, summar);
+
+    irs_list_clear(sorted_sents_scores);
+    irs_list_destroy(sorted_sents_scores);
 
     irs_list_clear(sentences);
     irs_list_destroy(sentences);
   }
   irs_iterator_destroy(doc_it);
+
+  return summarizations;
 }

@@ -51,6 +51,8 @@ irs_struct_node * irs_list_push(irs_list * list, irs_struct_node * node, void * 
  */
 irs_struct_node * irs_list_push_back(irs_list * list, void * data);
 
+irs_struct_node * irs_list_push_front(irs_list * list, irs_struct_node * node, void * data);
+
 /*! Pops last node from irs-list.
  * @param list A irs-list pointer
  * @returns Returns Popped node.
@@ -68,5 +70,7 @@ irs_bool irs_list_remove_if(irs_list * list, void * data, irs_bool (*predicate)(
  * @return Returns Iterator.
  */
 irs_iterator * irs_list_iterator(irs_list * list);
+
+irs_iterator * irs_list_reverse_iterator(irs_list * list);
 
 #endif
