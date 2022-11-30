@@ -228,3 +228,132 @@ irs_list * irs_engine_define_documents_languages(irs_engine * engine, irs_list *
 
   return langs;
 }
+
+irs_list * _irs_storage_get_document_sentences(irs_char * document)
+{
+  static const irs_char delim[] = " .!?";
+  irs_uint64 size = irs_str_len(document);
+  irs_char string[size + 1];
+  irs_mem_cpy(string, document, size);
+  string[size] = '\0';
+
+  irs_char * sentence = strtok(string, delim);
+  irs_list * sentences;
+  irs_list_init(&sentences);
+  while (sentence != NULL_PTR)
+  {
+    irs_uint64 const term_length = irs_str_len(sentence);
+
+    irs_char * term_copy;
+    irs_str_cpy(term_copy, sentence, term_length);
+    irs_list_push_back(sentences, term_copy);
+
+    sentence = strtok(NULL_PTR, delim);
+  }
+
+  return sentences;
+}
+
+irs_float _irs_storage_define_document_sentence_posd(irs_char * document, irs_char * sentence)
+{
+  irs_float const doc_size = irs_str_len(document);
+  irs_float const sen_pos = irs_str_find_position(document, sentence);
+  irs_float const posd = 1.0f - sen_pos / doc_size;
+  return posd;
+}
+
+irs_float _irs_storage_define_document_sentence_posp(irs_char * doc_part_with_sent, irs_char * sentence)
+{
+  irs_float const doc_part_with_sent_size = irs_str_len(doc_part_with_sent);
+  irs_float const sen_pos = irs_str_find_position(doc_part_with_sent, sentence);
+  irs_float const posd = 1.0f - sen_pos / doc_part_with_sent_size;
+  return posd;
+}
+
+irs_char * _irs_storage_define_document_part_with_sentence(irs_char * document, irs_char * sentence)
+{
+  irs_char * isent = irs_str_find_get(document, sentence);
+
+  irs_char const PART_SIGN = '\n';
+
+  irs_char * doc_part_with_sent_start = isent;
+  for (; doc_part_with_sent_start != document && *doc_part_with_sent_start != PART_SIGN; --doc_part_with_sent_start);
+
+  irs_char * doc_end = document + irs_str_len(document);
+  irs_char * doc_part_with_sent_end = isent;
+  for (; doc_part_with_sent_end != doc_end && *doc_part_with_sent_end != PART_SIGN; ++doc_part_with_sent_end);
+
+  irs_char * sent_part;
+  irs_uint64 const sent_part_length = doc_part_with_sent_end - doc_part_with_sent_start + 1;
+  irs_str_cpy(sent_part, doc_part_with_sent_start, sent_part_length);
+
+  return sent_part;
+}
+
+irs_float _irs_define_sentence_score(irs_char * document, irs_char * sentence)
+{
+  irs_float const posd = _irs_storage_define_document_sentence_posd(document, sentence);
+
+  irs_char * doc_part_with_sent = _irs_storage_define_document_part_with_sentence(document, sentence);
+  irs_float const posp = _irs_storage_define_document_sentence_posp(doc_part_with_sent, sentence);
+
+  irs_float const score = posd * posp;
+  return score;
+}
+
+irs_list * irs_engine_get_documents_summarizations(irs_engine * engine, irs_list * documents)
+{
+  irs_iterator * doc_it = irs_list_iterator(documents);
+  while (irs_iterator_next(doc_it))
+  {
+    irs_char * document = irs_iterator_get(doc_it);
+
+    irs_list * sentences = _irs_storage_get_document_sentences(document);
+    irs_list * sents_scores;
+    irs_list_init(&sents_scores);
+
+    irs_iterator * sent_it = irs_list_iterator(sentences);
+    irs_uint64 i = 0;
+
+    while (irs_iterator_next(sent_it))
+    {
+      irs_char * sentence = irs_iterator_get(sent_it);
+      irs_float const sent_score = _irs_define_sentence_score(document, sentence);
+
+      irs_pair sent_score_index;
+      sent_score_index.first = (void *)&sent_score;
+      sent_score_index.second = &i;
+
+      irs_list_push_back(sents_scores, (irs_pair *)&sent_score_index);
+      ++i;
+    }
+    irs_iterator_destroy(sent_it);
+
+    irs_iterator * sent_score_it = irs_list_iterator(sents_scores);
+
+    irs_list * sorted_sents_scores;
+    irs_list_init(&sorted_sents_scores);
+    if (irs_iterator_next(sent_score_it))
+    {
+      irs_pair const pair = *(irs_pair *)irs_iterator_get(sent_score_it);
+      irs_list_push_back(sorted_sents_scores, (irs_pair *)&pair);
+    }
+
+    while (irs_iterator_next(sent_score_it))
+    {
+
+
+      irs_pair const pair = *(irs_pair *)irs_iterator_get(sent_score_it);
+
+
+    }
+    irs_iterator_destroy(sent_score_it);
+
+    irs_list_destroy(sents_scores);
+
+
+    irs_list_clear(sentences);
+    irs_list_destroy(sentences);
+  }
+  irs_iterator_destroy(doc_it);
+}

@@ -35,6 +35,12 @@
 
 #define irs_str_find(str, substring) strstr(str, substring) != NULL_PTR
 
+#define irs_str_find_position(str, substring) \
+  (irs_uint64)(str - strstr(str, substring) + 1)
+
+#define irs_str_find_get(str, substring) \
+  strstr(str, substring)
+
 #define irs_str_cmp(str, other) strcmp(str, other) == 0
 
 #endif
