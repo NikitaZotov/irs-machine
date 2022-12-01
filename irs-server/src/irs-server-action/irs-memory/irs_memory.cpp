@@ -1,5 +1,7 @@
 #include "irs_memory.hpp"
 
+#include <sstream>
+
 extern "C"
 {
 #include "irs_memory.h"
@@ -125,6 +127,8 @@ std::vector<std::string> IrsMemory::GetLangs(std::vector<std::string> const & do
   {
     langs_vector.emplace_back((irs_char *)irs_iterator_get(it));
   }
+  irs_iterator_destroy(it);
+  irs_list_destroy(langs);
 
   return langs_vector;
 }
@@ -144,8 +148,20 @@ std::vector<std::string> IrsMemory::GetSummarizations(std::vector<std::string> c
   irs_iterator * it = irs_list_iterator(summarizations);
   while (irs_iterator_next(it))
   {
-    langs_vector.emplace_back((irs_char *)irs_iterator_get(it));
+    auto * sentences = (irs_list *)irs_iterator_get(it);
+    irs_iterator * sent_it = irs_list_iterator(sentences);
+    std::stringstream sstream;
+    while (irs_iterator_next(sent_it))
+    {
+     auto * sent = (irs_char *)irs_iterator_get(sent_it);
+     sstream << sent << ".";
+    }
+    irs_iterator_destroy(sent_it);
+    irs_list_destroy(sentences);
+    langs_vector.emplace_back(sstream.str());
   }
+  irs_iterator_destroy(it);
+  irs_list_destroy(summarizations);
 
   return langs_vector;
 }

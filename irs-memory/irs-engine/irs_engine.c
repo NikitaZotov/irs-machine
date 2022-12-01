@@ -314,7 +314,7 @@ irs_list * _irs_sort_doc_sentences_by_score(irs_list * sents_scores)
     irs_list_push_back(sorted_sents_scores, pair);
   }
 
-  while (irs_iterator_next(sent_score_it))
+  while (irs_iterator_next(sent_score_it) && sent_score_it->current)
   {
     irs_pair * sent_score_index = (irs_pair *)irs_iterator_get(sent_score_it);
     irs_uint64 const sent_score = (irs_uint64)sent_score_index->first;
@@ -408,7 +408,8 @@ irs_list * _irs_get_document_summarization(irs_list * sentences, irs_list * sort
   {
     if (summar[i] != NULL_PTR)
     {
-      irs_list_push_back(summar_sents, summar[i]);
+      irs_char * sentence = summar[i];
+      irs_list_push_back(summar_sents, sentence);
     }
   }
 
