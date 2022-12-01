@@ -43,5 +43,6 @@ protected:
       { "add_documents", new IrsMemoryAddDocumentsCommand() },
       { "get_documents", new IrsMemoryGetDocumentsCommand() },
       { "get_langs", new IrsMemoryGetDocumentsLangsCommand() },
+      { "get_summars", new IrsMemoryGetDocumentsSummarizationsCommand() },
   };
 };

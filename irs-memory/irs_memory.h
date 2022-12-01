@@ -27,4 +27,6 @@ irs_bool irs_memory_save(irs_memory * memory);
 
 irs_bool irs_memory_get_documents_langs(irs_memory * memory, irs_list const * documents, irs_list ** langs);
 
+irs_bool irs_memory_get_documents_summarizations(irs_memory * memory, irs_list const * documents, irs_list ** summarizations);
+
 #endif //_irs_memory_

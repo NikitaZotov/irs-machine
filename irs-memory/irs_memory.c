@@ -44,3 +44,9 @@ irs_bool irs_memory_get_documents_langs(irs_memory * memory, irs_list const * do
   *langs = irs_engine_define_documents_languages(memory->engine, documents);
   return (*langs)->size;
 }
+
+irs_bool irs_memory_get_documents_summarizations(irs_memory * memory, irs_list const * documents, irs_list ** summarizations)
+{
+  *summarizations = irs_engine_get_documents_summarizations(memory->engine, documents);
+  return (*summarizations)->size;
+}

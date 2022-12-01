@@ -128,3 +128,24 @@ std::vector<std::string> IrsMemory::GetLangs(std::vector<std::string> const & do
 
   return langs_vector;
 }
+
+std::vector<std::string> IrsMemory::GetSummarizations(std::vector<std::string> const & documents) const
+{
+  irs_list * list;
+  irs_list_init(&list);
+
+  for (auto const & document : documents)
+    irs_list_push_back(list, (irs_char *)document.c_str());
+
+  irs_list * summarizations;
+  irs_memory_get_documents_summarizations(m_memory, list, &summarizations);
+
+  std::vector<std::string> langs_vector;
+  irs_iterator * it = irs_list_iterator(summarizations);
+  while (irs_iterator_next(it))
+  {
+    langs_vector.emplace_back((irs_char *)irs_iterator_get(it));
+  }
+
+  return langs_vector;
+}

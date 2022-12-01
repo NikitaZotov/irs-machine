@@ -26,7 +26,9 @@ public:
   [[nodiscard]] std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>>
     Get(std::vector<std::string> const & terms) const;
 
-  std::vector<std::string> GetLangs(std::vector<std::string> const & documents) const;
+  [[nodiscard]] std::vector<std::string> GetLangs(std::vector<std::string> const & documents) const;
+
+  [[nodiscard]] std::vector<std::string> GetSummarizations(std::vector<std::string> const & documents) const;
 
 private:
   static IrsMemory * m_instance;
