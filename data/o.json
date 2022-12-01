@@ -1,8 +1,0 @@
-{
-  "id": 1,
-  "type": "add_documents",
-  "payload": [
-    "La science a pour objet de comprendre et d'expliquer le monde et ses phénomènes au départ de la connaissance, dans le but d'en tirer des prévisions et des applications fonctionnelles. Elle se veut ouverte à la critique tant au niveau des connaissances acquises, des méthodes utilisées pour les acquérir et de l'argumentation utilisée lors de la recherche scientifique ou participative.",
-    "L'insegnamento della scienza e la ricerca scientifica vengono praticati prevalentemente nelle università, negli istituti di ricerca e nelle imprese. Vengono detti scienziati tutti coloro che si dedicano alla ricerca di nuove conoscenze utilizzando metodi scientifici. La scienza moderna si sviluppa in modo particolare a partire dalla rivoluzione scientifica del XVI secolo con l'accumulo di conoscenze nei più svariati ambiti del sapere. La storia della scienza ne descrive lo sviluppo nel tempo."
-  ]
-}
