@@ -11,17 +11,18 @@ extern "C"
 
 IrsMemory * IrsMemory::m_instance = nullptr;
 
-IrsMemory::IrsMemory(irs_char const * path, irs_char const * data_path)
+IrsMemory::IrsMemory(irs_char const * path, irs_char const * lang_key_words_path, irs_char const * lang_alpha_path)
 {
-  irs_memory_initialize(&m_memory, path, data_path);
+  irs_memory_initialize(&m_memory, path, lang_key_words_path, lang_alpha_path);
   irs_memory_load(m_memory);
 }
 
-IrsMemory * IrsMemory::GetInstance(irs_char const * path, irs_char const * data_path)
+IrsMemory * IrsMemory::GetInstance(
+  irs_char const * path, irs_char const * lang_key_words_path, irs_char const * lang_alpha_path)
 {
   if (m_instance == nullptr)
   {
-    return m_instance = new IrsMemory(path, data_path);
+    return m_instance = new IrsMemory(path, lang_key_words_path, lang_alpha_path);
   }
 
   return m_instance;
@@ -110,7 +111,7 @@ std::vector<std::unordered_map<irs_uint64, std::pair<std::string, irs_float>>>
   return result;
 }
 
-std::vector<std::string> IrsMemory::GetLangs(std::vector<std::string> const & documents) const
+std::vector<std::string> IrsMemory::GetLangs(irs_uint8 type, std::vector<std::string> const & documents) const
 {
   irs_list * list;
   irs_list_init(&list);
@@ -119,7 +120,7 @@ std::vector<std::string> IrsMemory::GetLangs(std::vector<std::string> const & do
     irs_list_push_back(list, (irs_char *)document.c_str());
 
   irs_list * langs;
-  irs_memory_get_documents_langs(m_memory, list, &langs);
+  irs_memory_get_documents_langs(m_memory, type, list, &langs);
 
   std::vector<std::string> langs_vector;
   irs_iterator * it = irs_list_iterator(langs);

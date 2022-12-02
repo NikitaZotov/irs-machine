@@ -7,8 +7,11 @@
 
 typedef struct _irs_engine
 {
-  irs_char * path;
+  irs_char * lang_key_words_path;
   irs_list * lang_key_words;
+
+  irs_char * lang_alpha_path;
+  irs_list * lang_alphabets;
 
 } irs_engine;
 
@@ -23,11 +26,16 @@ typedef enum _irs_engine_status
 } irs_engine_status;
 
 
-irs_engine_status irs_engine_initialize(irs_engine ** engine, irs_char const * path);
+irs_engine_status irs_engine_initialize(
+  irs_engine ** engine,
+  irs_char const * path,
+  irs_char const * lang_alphabets_path);
 
 irs_engine_status irs_engine_shutdown(irs_engine * engine);
 
 irs_list * irs_engine_define_documents_languages(irs_engine * engine, irs_list * documents);
+
+irs_list * irs_engine_define_documents_languages_by_alphabets(irs_engine * engine, irs_list * documents);
 
 irs_list * irs_engine_get_documents_summarizations(irs_engine * engine, irs_list * documents);
 

@@ -9,7 +9,10 @@ std::unique_ptr<IrsServer> IrsServerFactory::ConfigureIrsServer(std::string cons
   IrsConfigGroup serverGroup = config["irs-server"];
 
   IrsConfigGroup memoryGroup = config["irs-memory"];
-  IrsMemoryData data = {memoryGroup["db_path"], memoryGroup["data_path"]};
+  IrsMemoryData data = {
+    memoryGroup["db_path"],
+    memoryGroup["lang_key_words_path"],
+    memoryGroup["lang_alpha_path"]};
 
   std::unique_ptr<IrsServer> server = std::unique_ptr<IrsServer>(new IrsServerImpl(
       serverGroup["host"],
@@ -24,5 +27,5 @@ std::unique_ptr<IrsServer> IrsServerFactory::ConfigureIrsServer(std::string cons
 
 std::vector<std::string> IrsServerFactory::GetKeys()
 {
-  return { "db_path", "data_path" };
+  return { "db_path", "lang_key_words_path", "lang_alpha_path" };
 }

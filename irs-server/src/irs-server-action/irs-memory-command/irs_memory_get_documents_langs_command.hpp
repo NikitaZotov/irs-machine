@@ -8,8 +8,10 @@ public:
   IrsMemoryJsonPayload Complete(
       IrsMemory const & memory, IrsMemoryJsonPayload requestPayload, irs_bool & status) override
   {
-    auto const documents = requestPayload.get<std::vector<std::string>>();
-    std::vector<std::string> const langs = memory.GetLangs(documents);
+    auto const documents = requestPayload["documents"].get<std::vector<std::string>>();
+    irs_uint8 const methodType = requestPayload["method_type"].get<irs_uint8>();
+
+    std::vector<std::string> const langs = memory.GetLangs(methodType, documents);
 
     status = langs.size();
     return IrsMemoryJsonPayload(langs);

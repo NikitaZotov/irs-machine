@@ -51,7 +51,7 @@ void _irs_engine_define_documents_langs(irs_engine * engine, irs_uint32 const co
 TEST(irs_engine_define_documents_langs_benchmark)
 {
   irs_engine * engine;
-  EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "data/langs") == IRS_ENGINE_OK);
+  EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "data/langs", "data/alpha") == IRS_ENGINE_OK);
 
   _irs_engine_define_documents_langs(engine, 1);
   _irs_engine_define_documents_langs(engine, 2);

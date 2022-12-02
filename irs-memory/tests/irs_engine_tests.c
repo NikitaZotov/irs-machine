@@ -9,7 +9,7 @@
 TEST(irs_engine_init_shut)
 {
   irs_engine * engine;
-  EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "langs/") == IRS_ENGINE_OK);
+  EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "langs/", "langs/") == IRS_ENGINE_OK);
 
   EXPECT_IRS_TRUE(irs_engine_shutdown(engine) == IRS_ENGINE_OK);
 }
@@ -17,7 +17,7 @@ TEST(irs_engine_init_shut)
 TEST(irs_engine_define_documents_langs)
 {
   irs_engine * engine;
-  EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "langs/") == IRS_ENGINE_OK);
+  EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "langs/", "langs/") == IRS_ENGINE_OK);
 
   irs_list * documents;
   irs_list_init(&documents);
@@ -53,7 +53,7 @@ TEST(irs_engine_define_documents_langs)
 TEST(irs_engine_define_documents_summars)
 {
   irs_engine * engine;
-  EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "langs/") == IRS_ENGINE_OK);
+  EXPECT_IRS_TRUE(irs_engine_initialize(&engine, "langs/", "langs/") == IRS_ENGINE_OK);
 
   irs_list * documents;
   irs_list_init(&documents);

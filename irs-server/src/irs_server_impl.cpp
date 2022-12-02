@@ -11,7 +11,8 @@ IrsServerImpl::IrsServerImpl(
     IrsMemoryData const & data)
   : IrsServer(host, port, logType, logFile, logLevel)
 {
-  m_memory = IrsMemory::GetInstance(data.dbPath.c_str(), data.dataPath.c_str());
+  m_memory
+    = IrsMemory::GetInstance(data.dbPath.c_str(), data.langKeyWordsPath.c_str(), data.langAlphaPath.c_str());
 
   LogMessage(IrsServerLogMessages::app, "Database path: " + data.dbPath);
   LogMessage(IrsServerLogMessages::app, "Data path: " + data.dbPath);

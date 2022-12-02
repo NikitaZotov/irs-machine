@@ -18,7 +18,7 @@ void _irs_char_to_irs_int(irs_char ch, irs_uint8 * ch_num, irs_uint8 * mask)
   *ch_num = 128 + (irs_uint8)ch;
 }
 
-irs_pair * _irs_engine_read_lang_file(irs_dictionary * dictionary, irs_char const * path)
+irs_pair * _irs_engine_read_lang_words_file(irs_dictionary * dictionary, irs_char const * path)
 {
   irs_io_channel * channel = irs_io_new_channel(path, "r", NULL_PTR);
   irs_io_channel_set_encoding(channel, NULL_PTR, NULL_PTR);
@@ -53,7 +53,7 @@ irs_char * _irs_init_lang_file_path(irs_char const * path, irs_char const * post
   return out_path;
 }
 
-void _irs_engine_read_lang_dictionaries(irs_engine * engine, irs_char const * path)
+void _irs_engine_read_lang_word_dictionaries(irs_engine * engine, irs_char const * path)
 {
   if (engine->lang_key_words == NULL_PTR)
   {
@@ -71,26 +71,88 @@ void _irs_engine_read_lang_dictionaries(irs_engine * engine, irs_char const * pa
     irs_dictionary_initialize(&dict, _irs_dictionary_children_size(), _irs_char_to_irs_int);
 
     irs_char * file_path = _irs_init_lang_file_path(path, filename);
-    irs_pair * pair = _irs_engine_read_lang_file(dict, file_path);
+    irs_pair * pair = _irs_engine_read_lang_words_file(dict, file_path);
     irs_list_push_back(engine->lang_key_words, pair);
   }
 }
 
-irs_engine_status irs_engine_initialize(irs_engine ** engine, irs_char const * path)
+irs_pair * _irs_engine_read_lang_alphabets_file(irs_list * list, irs_char const * path)
 {
-  if (path == NULL_PTR)
+  irs_io_channel * channel = irs_io_new_channel(path, "r", NULL_PTR);
+  irs_io_channel_set_encoding(channel, NULL_PTR, NULL_PTR);
+
+  irs_char * word;
+  irs_uint64 length;
+
+  irs_pair * list_lang;
+  GIOStatus status = g_io_channel_read_line(channel, &word, &length, NULL_PTR, NULL_PTR);
+  irs_char * copy;
+  irs_str_cpy(copy, word, length - 1);
+  irs_pair_initialize(&list_lang, list, copy);
+
+  while (status != G_IO_STATUS_EOF)
+  {
+    irs_str_cpy(copy, word, length - 1);
+    irs_list_push_back(list, copy);
+    irs_mem_free(word);
+
+    status = g_io_channel_read_line(channel, &word, &length, NULL_PTR, NULL_PTR);
+  }
+  irs_io_channel_shutdown(channel, IRS_TRUE, NULL_PTR);
+
+  return list_lang;
+}
+
+void _irs_engine_read_lang_aphabet_dictionaries(irs_engine * engine, irs_char const * path)
+{
+  if (engine->lang_alphabets == NULL_PTR)
+  {
+    irs_list_init(&engine->lang_alphabets);
+  }
+
+  GDir * dir;
+  GError * error;
+  irs_char const * filename;
+
+  dir = g_dir_open(path, 0, &error);
+  while ((filename = g_dir_read_name(dir)))
+  {
+    irs_list * lang_alphabet;
+    irs_list_init(&lang_alphabet);
+
+    irs_char * file_path = _irs_init_lang_file_path(path, filename);
+    irs_pair * pair = _irs_engine_read_lang_alphabets_file(lang_alphabet, file_path);
+    irs_list_push_back(engine->lang_alphabets, pair);
+  }
+}
+
+irs_engine_status irs_engine_initialize(
+  irs_engine ** engine,
+  irs_char const * lang_key_words_path,
+  irs_char const * lang_alphabets_path)
+{
+  if (lang_alphabets_path == NULL_PTR)
     return IRS_ENGINE_WRONG_PATH;
 
-  if (irs_fs_isdir(path) == IRS_FALSE)
+  if (irs_fs_isdir(lang_key_words_path) == IRS_FALSE)
   {
-    if (irs_fs_mkdirs(path) == IRS_FALSE)
+    if (irs_fs_mkdirs(lang_key_words_path) == IRS_FALSE)
+      return IRS_ENGINE_WRONG_PATH;
+  }
+
+  if (irs_fs_isdir(lang_alphabets_path) == IRS_FALSE)
+  {
+    if (irs_fs_mkdirs(lang_alphabets_path) == IRS_FALSE)
       return IRS_ENGINE_WRONG_PATH;
   }
 
   *engine = irs_mem_new(irs_engine, 1);
   {
-    irs_str_cpy((*engine)->path, path, irs_str_len(path));
-    _irs_engine_read_lang_dictionaries(*engine, path);
+    irs_str_cpy((*engine)->lang_key_words_path, lang_key_words_path, irs_str_len(lang_key_words_path));
+    _irs_engine_read_lang_word_dictionaries(*engine, lang_key_words_path);
+
+    irs_str_cpy((*engine)->lang_alpha_path, lang_alphabets_path, irs_str_len(lang_alphabets_path));
+    _irs_engine_read_lang_aphabet_dictionaries(*engine, lang_alphabets_path);
   }
 
   return IRS_ENGINE_OK;
@@ -116,7 +178,7 @@ irs_engine_status irs_engine_shutdown(irs_engine * engine)
   if (engine == NULL_PTR)
     return IRS_ENGINE_NO;
 
-  irs_mem_free(engine->path);
+  irs_mem_free(engine->lang_key_words_path);
   _irs_engine_clear_lang_dictionaries(engine);
   irs_mem_free(engine);
 
@@ -224,6 +286,85 @@ irs_list * irs_engine_define_documents_languages(irs_engine * engine, irs_list *
       ++position;
     }
     irs_iterator_destroy(lang_dict_it);
+  }
+
+  return langs;
+}
+
+irs_list * irs_engine_define_documents_languages_by_alphabets(irs_engine * engine, irs_list * documents)
+{
+  irs_list * langs;
+  irs_list_init(&langs);
+
+  irs_iterator * it = irs_list_iterator(documents);
+  while (irs_iterator_next(it))
+  {
+    irs_char * document = irs_iterator_get(it);
+    irs_uint64 doc_length = irs_str_len(document);
+
+    irs_list * document_lang_common_coincidences;
+    irs_list_init(&document_lang_common_coincidences);
+
+    irs_iterator * lang_alphabet_it = irs_list_iterator(engine->lang_alphabets);
+    while (irs_iterator_next(lang_alphabet_it))
+    {
+      irs_uint32 common_coincidences = 0;
+
+      irs_pair * alphabet_lang = irs_iterator_get(lang_alphabet_it);
+      irs_list * alphabet = alphabet_lang->first;
+
+      irs_iterator * alphabet_ch_it = irs_list_iterator(alphabet);
+      while (irs_iterator_next(alphabet_ch_it))
+      {
+        irs_char const alphabet_ch = *(irs_char *)irs_iterator_get(alphabet_ch_it);
+
+        for (irs_uint64 i = 0; i < doc_length; ++i)
+        {
+          irs_char const ch = document[i];
+          {
+            if (ch == alphabet_ch)
+              ++common_coincidences;
+          }
+        }
+      }
+      irs_iterator_destroy(alphabet_ch_it);
+
+      irs_list_push_back(document_lang_common_coincidences, (void *)common_coincidences);
+    }
+    irs_iterator_destroy(lang_alphabet_it);
+
+    irs_uint32 position = 0;
+    irs_uint32 max_common_coincidences = 0;
+    irs_uint32 max_common_coincidences_pos = 0;
+    irs_iterator * coincidence_it = irs_list_iterator(document_lang_common_coincidences);
+    while (irs_iterator_next(coincidence_it))
+    {
+      irs_uint32 common_coincidences = (irs_uint32)irs_iterator_get(coincidence_it);
+      if (max_common_coincidences < common_coincidences)
+      {
+        max_common_coincidences = common_coincidences;
+        max_common_coincidences_pos = position;
+      }
+
+      ++position;
+    }
+    irs_iterator_destroy(coincidence_it);
+    irs_list_destroy(document_lang_common_coincidences);
+
+    position = 0;
+    lang_alphabet_it = irs_list_iterator(engine->lang_key_words);
+    while (irs_iterator_next(lang_alphabet_it))
+    {
+      if (position == max_common_coincidences_pos)
+      {
+        irs_pair * dictionary_lang = irs_iterator_get(lang_alphabet_it);
+        irs_char * defined_lang = dictionary_lang->second;
+        irs_list_push_back(langs, defined_lang);
+      }
+
+      ++position;
+    }
+    irs_iterator_destroy(lang_alphabet_it);
   }
 
   return langs;
