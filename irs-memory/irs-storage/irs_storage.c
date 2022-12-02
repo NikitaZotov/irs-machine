@@ -311,7 +311,8 @@ irs_dictionary * _irs_storage_assign_terms_in_documents(irs_list * document_offs
         irs_float const frequency = _irs_storage_calculate_term_frequency(term, document_terms);
         irs_float const significancy = _irs_storage_calculate_term_significancy(frequency, reverse_frequency);
 
-        if (significancy <= 0.f)
+        static irs_float const REQ_SIGNIFICANCY = 0.f;
+        if (significancy <= REQ_SIGNIFICANCY)
           continue;
 
         irs_char * significancy_str;
